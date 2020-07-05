@@ -11,7 +11,7 @@ import Background8 from '../img/background8.jpg';
 import Background9 from '../img/background9.jpg';
 import Background10 from '../img/background10.jpg';
 
-function BG(props) {
+function BG() {
   const [backgroundImage, setBackgroundImage] = useState('');
   useEffect(() => {
     const bgArray = [
@@ -21,17 +21,10 @@ function BG(props) {
     setBackgroundImage(bgArray[Math.floor(Math.random() * bgArray.length)]);
   }, []);
 
-  if (props.image) {
-    return(
-      <div className="background" style={{ backgroundImage: `url(${ backgroundImage })` }}>
-      </div>
-    );
-  } else {
-    return(
-      <div className="background" style={{ opacity: '1', filter: 'none' ,backgroundColor: '#EEEEEE' }}>
-      </div>
-    );
-  }
+  return(
+    <div className="background" style={{ backgroundImage: `url(${ backgroundImage })` }}>
+    </div>
+  );
 }
 
 export { BG as default };

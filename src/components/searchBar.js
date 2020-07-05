@@ -25,7 +25,7 @@ function HomeSearch() {
       value={ cardQuery }
       id="search"
       type="text"
-      name="cardName"
+      name="q"
       className="inputText"
       onChange={ e => setCardQuery(e.target.value) }
       required

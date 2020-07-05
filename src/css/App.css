@@ -22,9 +22,12 @@ strong {
   display: flex;
   flex-direction: column;
   font-family: 'Source Sans Pro', sans-serif;
-  min-height: 100vh;
   overflow: hidden;
   z-index: 2;
+}
+
+.content.home {
+  min-height: 100vh;
 }
 
 .navbar {

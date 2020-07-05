@@ -11,7 +11,7 @@ function Home() {
   return (
     <div className="wrapper">
       <BG image={ true } />
-      <div className="content">
+      <div className="content home">
         <NavBar active="navhome" />
         <div className="flex">
           <h1 className="title">

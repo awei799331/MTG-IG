@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Route, Redirect } from 'react-router-dom'; // eslint-disable-line
 import axios from 'axios';
 import queryString from 'query-string';
+import PuffLoader from "react-spinners/PuffLoader";
 import '../css/App.css';
 import '../css/search.css';
 import NavBar from './navbar';
@@ -15,14 +16,14 @@ function Search(props) {
   const [page, setPage] = useState(1);
   useEffect(() => {
     const query = queryString.parse(props.location.search);
-    if (!query.cardName.trim()) {
+    if (!query.q.trim()) {
       setRedir(true);
     } else {
       axios.get('https://api.scryfall.com/cards/search', {
         params: {
           order: 'name',
           unique: 'cards',
-          q: query.cardName,
+          q: query.q,
           page: page
         }
         })
@@ -54,8 +55,14 @@ function Search(props) {
           <NavBar />
 
           { renderType === 'loading' ?
-            <div style={{ fontSize: '4em' }}>
-              Loading
+            <div className="load">
+              <div style={{ marginTop: '150px' }}>
+                <PuffLoader
+                size={150}
+                color="#005E3A" 
+                />
+                <h2 style={{ color:'#005E3A', textAlign: 'center' }} >Fetching data</h2>
+              </div>
             </div> :
 
             redir ?
@@ -87,15 +94,44 @@ function Search(props) {
 function MultiSearch(props) {
   const cardArray = useState(props.data.data);
 
-  const multiSearchItem = cardArray[0].map((card) => 
-    <div key={ card.id }>
-      { card.image_uris ?
-        <img alt="" src={ card.image_uris.small } /> :
+  const multiSearchItem = cardArray[0].map((card, i) => 
+    <div className="multiCardItem" key={ card.id } >
+      <a href={`/search?q=${ card.name }`} >
+        { card.image_uris ?
+          <img alt="" href={`/search?q=${ card.name }`} className="multiCardImg" src={ card.image_uris.normal } /> :
 
-        card.card_faces ?
-        <img alt="" src={ card.card_faces[0].image_uris.small } /> :
+          card.card_faces ?
+          <img alt="" href={`/search?q=${ card.name }`} className="multiCardImg" src={ card.card_faces[0].image_uris.normal } /> :
 
-        <img alt="" src="https://cdn.download.ams.birds.cornell.edu/api/v1/asset/59953131/1800" />
+          <img alt="" href={`/search?q=${ card.name }`} src="https://cdn.download.ams.birds.cornell.edu/api/v1/asset/59953131/1800" />
+        }
+      </a>
+      { (card.tcgplayer_id) ? [
+        <>
+          { card.prices.usd &&
+            <a
+            className="multiCard"
+            target="_blank"
+            rel="noopener noreferrer"
+            href={`https://shop.tcgplayer.com/product/productsearch?id=${card.tcgplayer_id}&utm_campaign=affiliate&utm_medium=MTGInvestorsGrail&utm_source=MTGInvestorsGrail`}
+            >
+              Buy non-foil: { card.prices.usd }
+            </a>
+          } { card.prices.usd_foil &&
+            <a
+            className="multiCard"
+            target="_blank"
+            rel="noopener noreferrer"
+            href={`https://shop.tcgplayer.com/product/productsearch?id=${card.tcgplayer_id}&utm_campaign=affiliate&utm_medium=MTGInvestorsGrail&utm_source=MTGInvestorsGrail`}
+            >
+              Buy foil: { card.prices.usd_foil }
+            </a>
+          }
+        </>
+        ] : 
+        <p className="multiCard">
+          Purchase not available
+        </p>
       }
     </div>
   );
