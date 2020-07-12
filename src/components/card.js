@@ -30,7 +30,6 @@ function Card() {
           return res.data;
         })
         .then(res => {
-          console.log(res);
           if (res.object === 'card') {
             setRenderType('single');
           } else {
@@ -87,6 +86,13 @@ function Card() {
                     <CardFlavor>
                       { response.flavor_text }
                     </CardFlavor>
+                    { (response.power && response.toughness) &&
+                      <PT>
+                        Power / Toughness:&nbsp;
+                        <span>{ response.power }</span>&nbsp;/&nbsp;
+                        <span>{ response.toughness }</span>
+                      </PT>
+                    }
                     <Link to={`/search?q=oracle_id%3A${ fixedEncodeURIComponent(response.oracle_id) }&unique=prints`} >
                       <button>
                         <span>Search for all printings</span>
@@ -98,10 +104,29 @@ function Card() {
                 response.card_faces ?
                 <>
                   <ImageWrapper>
-                    <img alt="card" className="cardImg" src={ response.card_faces[cardSide].image_uris.normal } />
+                    <FlipImg alt="card" src={ response.card_faces[cardSide].image_uris.normal } />
                     <button onClick={ flipCard }>Flip</button>
                   </ImageWrapper>
                   <div className="cardData">
+                    <CardName>
+                      { response.card_faces[cardSide].name }
+                    </CardName>
+                    <CardType>
+                      { response.card_faces[cardSide].type_line }
+                    </CardType>
+                    { response.card_faces[cardSide].oracle_text.split('\n').map((str, index) => {
+                      return <CardDesc key={index}>{ str }</CardDesc>;
+                    }) }
+                    <CardFlavor>
+                      { response.card_faces[cardSide].flavor_text }
+                    </CardFlavor>
+                    { (response.card_faces[cardSide].power && response.card_faces[cardSide].toughness) &&
+                      <PT>
+                        Power / Toughness:&nbsp;
+                        <span>{ response.card_faces[cardSide].power }</span>&nbsp;/&nbsp;
+                        <span>{ response.card_faces[cardSide].toughness }</span>
+                      </PT>
+                    }
                     <Link to={`/search?q=oracle_id%3A${ fixedEncodeURIComponent(response.oracle_id) }&unique=prints`} >
                       <button>
                         <span>Search for all printings</span>
@@ -137,6 +162,17 @@ const ImageWrapper = styled.div`
   flex-flow: column nowrap;
   align-items: flex-start;
   justify-content: flex-start;
+  margin: 25px;
+`;
+
+const FlipImg = styled.img`
+  width: 100%;
+  height: 100%;
+  max-width: 366px;
+  max-height: 510px;
+  border-radius: 4.75% / 3.75%;
+  align-self: flex-start;
+  box-shadow: 0px 0px 10px 2px rgba(44, 44, 50, 0.3);
 `;
 
 const CardName = styled.p`
@@ -154,7 +190,7 @@ const CardType = styled.p`
   font-weight: 700;
   color: #b3b3b3;
   margin: 0 32px;
-  line-height: 0px;
+  line-height: 24px;
   padding: 32px 0;
   border-bottom: 1px solid #d6d6d6;
 `;
@@ -178,6 +214,16 @@ const CardFlavor = styled.p`
   padding: 32px;
   border-bottom: 1px solid #d6d6d6;
   white-space: pre-line;
+`;
+
+const PT = styled.p`
+  font-size: 16px;
+  font-weight: 400;
+  color: #000000;
+  margin: 0;
+  padding: 16px 32px 16px;
+  white-space: pre-line;
+  border-bottom: 1px solid #d6d6d6;
 `;
 
 export { Card as default };

@@ -1,34 +1,18 @@
-import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { NavLink } from 'react-router-dom';
 import { useSpring, animated, config } from "react-spring";
 import styled from 'styled-components';
 import '../css/App.css';
-import '../css/animations.css';
 
 function NavBar() {
   const [navbarOpen, setNavbarOpen] = useState(false);
-
-  useEffect(() => {
-    let navbarClasses = document.getElementsByClassName("navtext");
-    navbarClasses = [...navbarClasses];
-    navbarClasses.forEach(element => {
-      element.addEventListener("mouseover", (e) => {
-        element.classList.remove("navbarUnhovered")
-        element.classList.add("navbarHovered")
-      })
-      element.addEventListener("mouseout", (e) => {
-        element.classList.add("navbarUnhovered")
-        element.classList.remove("navbarHovered")
-      })
-    });
-  });
 
   const barAnimation = useSpring({
     from: { transform: 'translate3d(0, -10rem, 0)' },
     transform: 'translate3d(0, 0, 0)',
   });
 
-  const linkAnimation = useSpring({
+  const LinkAnimation = useSpring({
     from: { transform: 'translate3d(800px, 0, 0)', opacity: 0 },
     to: { transform: 'translate3d(0, 0, 0)', opacity: 1 },
     delay: 800,
@@ -41,15 +25,15 @@ function NavBar() {
 
   return (
     <>
-      <animated.nav style={ barAnimation }>
+      <Nav style={ barAnimation }>
         <Container>
           <Logo />
-          <animated.ul style={ linkAnimation } className="navbar">
-            <li className="navtext unfocused"><Link to="/login">Profile</Link></li>
-            <li className="navtext unfocused"><Link to="/">Login</Link></li>
-            <li className="navtext unfocused"><Link to="/">Contact</Link></li>
-            <li className="navtext unfocused"><Link to="/">About</Link></li>
-            <li className="navtext unfocused"><Link to="/">How it Works</Link></li>
+          <animated.ul style={ LinkAnimation } className="navbar">
+            <li className="navtext"><NavLink to="/howItWorks">How it Works</NavLink></li>
+            <li className="navtext"><NavLink to="/about">About</NavLink></li>
+            <li className="navtext"><NavLink to="/contact">Contact</NavLink></li>
+            <li className="navtext"><NavLink to="/profile">Profile</NavLink></li>
+            <li className="navtext"><NavLink to="/login">Login</NavLink></li>
           </animated.ul>
           <NavBurgerWrapper>
             <Burger
@@ -58,7 +42,7 @@ function NavBar() {
             />
           </NavBurgerWrapper>
         </Container>
-      </animated.nav>
+      </Nav>
       <CollapseMenu
         navbarState={ navbarOpen }
         handleNavbar={ handleNavbar }
@@ -69,7 +53,7 @@ function NavBar() {
 
 function Logo() {
   return(
-    <div className="navtext unfocused">
+    <div className="navtext">
       <a href="/">MTG Investor's Grail</a>
     </div>
   );
@@ -79,14 +63,13 @@ const CollapseMenu = (props) => {
   if (props.navbarState === true) {
     return (
       <CollapseWrapper>
-        <CollapseNavLinks>
-          <li><Link to="/">MTG Investor's Grail</Link></li>
-          <li><Link to="/">Profile</Link></li>
-          <li><Link to="/">Login</Link></li>
-          <li><Link to="/">Contact</Link></li>
-          <li><Link to="/">About</Link></li>
-          <li><Link to="/">How it Works</Link></li>
-        </CollapseNavLinks>
+        <CollapseNavNavLinks>
+          <li><NavLink to="/howItWorks">How it Works</NavLink></li>
+          <li><NavLink to="/about">About</NavLink></li>
+          <li><NavLink to="/contact">Contact</NavLink></li>
+          <li><NavLink to="/profile">Profile</NavLink></li>
+          <li><NavLink to="/login">Login</NavLink></li>
+        </CollapseNavNavLinks>
       </CollapseWrapper>
     );
   }
@@ -105,13 +88,17 @@ function Burger(props) {
   );
 }
 
+const Nav = styled(animated.div)`
+  font-size: 14px;
+`;
+
 const Container = styled.div`
   display: flex;
   flex-flow: row nowrap;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   margin: 0;
-  height: 50px;
+  height: auto;
   background-color: #222222;
 `;
 
@@ -155,7 +142,7 @@ const CollapseWrapper = styled.div`
   left: 0;
 `;
 
-const CollapseNavLinks = styled.ul`
+const CollapseNavNavLinks = styled.ul`
   list-style-type: none;
   padding: 28px;
   width: 100vw;

@@ -37,6 +37,11 @@
 	border-style: solid;
 	margin: 2% auto 5%;
 	outline: none;
+	transition: all 500ms linear 0s;
+}
+
+.inputText:focus {
+	border-color: white;
 }
 
 @media only screen and (max-width: 767px) {
