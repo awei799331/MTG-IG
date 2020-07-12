@@ -1,30 +1,36 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Route, Redirect } from 'react-router-dom'; // eslint-disable-line
+import { Redirect, Link } from 'react-router-dom'; // eslint-disable-line
 import axios from 'axios';
 import queryString from 'query-string';
 import PuffLoader from "react-spinners/PuffLoader";
+import { animated, useTrail } from 'react-spring';
+import styled from 'styled-components';
+
 import '../css/App.css';
 import '../css/search.css';
 import NavBar from './navbar';
 import Footer from './footer';
 import BG from './background';
+import { fixedEncodeURIComponent, decodeQueryParam } from '../utils/utils';
 
 function Search(props) {
   const [redir, setRedir] = useState(false);
   const [response, setResponse] = useState({});
   const [renderType, setRenderType] = useState('loading');
-  const [page, setPage] = useState(1);
   useEffect(() => {
     const query = queryString.parse(props.location.search);
-    if (!query.q.trim()) {
+    for (let prop in query) {
+      query[prop] = decodeQueryParam(query[prop]);
+    }
+    if (query.q.trim() === '') {
       setRedir(true);
     } else {
       axios.get('https://api.scryfall.com/cards/search', {
         params: {
           order: 'name',
-          unique: 'cards',
-          q: query.q,
-          page: page
+          unique: query.unique ? query.unique: 'card',
+          q: query.q ? query.q : '',
+          page: query.q ? query.q : 1
         }
         })
         .then(res => {
@@ -45,37 +51,35 @@ function Search(props) {
           console.log(e);
         });
     }
-  }, [props.location.search, page]);
+  }, [props.location.search]);
 
   return(
     <>
       <div className="wrapper">
-        <BG />
+      <BG />
         <div className="content">
           <NavBar />
 
-          { renderType === 'loading' ?
+          { redir ?
+            <Redirect to='/' /> :
+            
+            renderType === 'loading' ?
             <div className="load">
               <div style={{ marginTop: '150px' }}>
                 <PuffLoader
                 size={150}
-                color="#005E3A" 
+                color="#005E3A"
                 />
                 <h2 style={{ color:'#005E3A', textAlign: 'center' }} >Fetching data</h2>
               </div>
             </div> :
 
-            redir ?
-            <Redirect to='/' /> :
-
             renderType === 'multi' ?
             <MultiSearch data={ response } /> :
 
             renderType === 'single' ?
-            <div style={{ fontSize: '4em' }}>
-              Single card
-            </div> :
-
+            <Redirect to={`/card/${ fixedEncodeURIComponent(response.data[0].id) }`} /> :
+            
             renderType === 'none' ?
             <div style={{ fontSize: '4em' }}>
               None
@@ -94,38 +98,51 @@ function Search(props) {
 function MultiSearch(props) {
   const cardArray = useState(props.data.data);
 
-  const multiSearchItem = cardArray[0].map((card, i) => 
-    <div className="multiCardItem" key={ card.id } >
-      <a href={`/search?q=${ card.name }`} >
-        { card.image_uris ?
-          <img alt="" href={`/search?q=${ card.name }`} className="multiCardImg" src={ card.image_uris.normal } /> :
+  const trail = useTrail(cardArray[0].length, {
+    config: { tension: 2000, friction: 150, delay: 100 },
+    from: { opacity: 0 },
+    to: { opacity: 1 },
+  })
 
-          card.card_faces ?
-          <img alt="" href={`/search?q=${ card.name }`} className="multiCardImg" src={ card.card_faces[0].image_uris.normal } /> :
+  const multiSearchItem = trail.map((card, i) => 
+    <animated.div style={ card } className="multiCardItem" key={ cardArray[0][i].id } >
+      <LinkWrapper to={`/card/${ fixedEncodeURIComponent(cardArray[0][i].id) }`} >
+        { cardArray[0][i].image_uris ?
+          <img alt="" className="multiCardImg" src={ cardArray[0][i].image_uris.normal } /> :
 
-          <img alt="" href={`/search?q=${ card.name }`} src="https://cdn.download.ams.birds.cornell.edu/api/v1/asset/59953131/1800" />
+          cardArray[0][i].card_faces ?
+          <img alt="" className="multiCardImg" src={ cardArray[0][i].card_faces[0].image_uris.normal } /> :
+
+          <img alt="" className="multiCardImg" />
         }
-      </a>
-      { (card.tcgplayer_id) ? [
+      </LinkWrapper>
+      { (cardArray[0][i].tcgplayer_id) ? [
         <>
-          { card.prices.usd &&
+          { cardArray[0][i].prices.usd &&
             <a
             className="multiCard"
             target="_blank"
             rel="noopener noreferrer"
             href={`https://shop.tcgplayer.com/product/productsearch?id=${card.tcgplayer_id}&utm_campaign=affiliate&utm_medium=MTGInvestorsGrail&utm_source=MTGInvestorsGrail`}
-            >
-              Buy non-foil: { card.prices.usd }
-            </a>
-          } { card.prices.usd_foil &&
+            ><strong>
+              Buy non-foil:&nbsp;
+              <span style={{ color: "#00623B"}} >
+                ${ cardArray[0][i].prices.usd } USD
+              </span>
+            </strong></a>
+          } 
+          { cardArray[0][i].prices.usd_foil &&
             <a
             className="multiCard"
             target="_blank"
             rel="noopener noreferrer"
             href={`https://shop.tcgplayer.com/product/productsearch?id=${card.tcgplayer_id}&utm_campaign=affiliate&utm_medium=MTGInvestorsGrail&utm_source=MTGInvestorsGrail`}
-            >
-              Buy foil: { card.prices.usd_foil }
-            </a>
+            ><strong>
+              Buy foil:&nbsp;
+              <span style={{ color: "#00623B"}} >
+                ${ cardArray[0][i].prices.usd_foil } USD
+              </span>
+            </strong></a>
           }
         </>
         ] : 
@@ -133,7 +150,7 @@ function MultiSearch(props) {
           Purchase not available
         </p>
       }
-    </div>
+    </animated.div>
   );
 
   return(
@@ -142,5 +159,10 @@ function MultiSearch(props) {
     </div>
   );
 }
+
+const LinkWrapper = styled(Link)`
+  margin: 10px auto;
+  height: 340px;
+`;
 
 export { Search as default };

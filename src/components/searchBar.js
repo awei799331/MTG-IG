@@ -1,29 +1,31 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import '../css/App.css';
 import '../css/home.css';
 import '../css/animations.css'
 
 function HomeSearch() {
   const [cardQuery, setCardQuery] = useState('');
+  const searchRef = useRef();
 
   useEffect(() => {
-    const searchBarId = document.getElementById('search');
+    const node = searchRef.current;
 
-    searchBarId.addEventListener("focusin", (e) => {
-      searchBarId.classList.remove("searchBorderUnfocused");
-      searchBarId.classList.add("searchBorderHighlighted");
+    node.addEventListener("focusin", (e) => {
+      node.classList.remove("searchBorderUnfocused");
+      node.classList.add("searchBorderHighlighted");
     })
-    searchBarId.addEventListener("focusout", (e) => {
-      searchBarId.classList.remove("searchBorderHighlighted");
-      searchBarId.classList.add("searchBorderUnfocused");
+    node.addEventListener("focusout", (e) => {
+      node.classList.remove("searchBorderHighlighted");
+      node.classList.add("searchBorderUnfocused");
     })
   }, []);
 
   return(
     <form className="form" action="search">
       <input
+      autoComplete="off"
       value={ cardQuery }
-      id="search"
+      ref= { searchRef }
       type="text"
       name="q"
       className="inputText"

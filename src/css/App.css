@@ -2,7 +2,7 @@ html, body {
   margin: 0;
   padding: 0;
   background: black;
-  font-family: 'Source Sans Pro', sans-serif;
+  font-family: 'Source Sans Pro', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Oxygen', 'Helevetica Neue', 'Arial', sans-serif;
 }
 
 strong {
@@ -21,48 +21,53 @@ strong {
   position: relative;
   display: flex;
   flex-direction: column;
-  font-family: 'Source Sans Pro', sans-serif;
   overflow: hidden;
   z-index: 2;
 }
 
 .content.home {
+  width: 100%;
   min-height: 100vh;
 }
 
 .navbar {
-  position: fixed;
+  float: right;
   list-style-type: none;
-  display: block;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
   padding: 0;
   overflow: hidden;
   background-color: #222222;
-  width: 100%;
-  margin: 0;
-}
-
-.navbar-search {
-  list-style-type: none;
-  display: block;
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-  background-color: #222222;
-  width: 70%;
-  margin: 0 auto;
+  margin: auto 0;
+  height: 50px;
+  z-index: 100;
 }
 
 .navtext {
-  float: right;
   user-select: none;
+  padding: 0;
+  text-align: center;
+  vertical-align: middle;
+  line-height: 49px;
+
 }
 
 .navtext a {
-  display: block;
+  padding: 16px 28px;
   color: white;
   font-size: 14px;
-  padding: 12px 28px;
+  margin: auto;
   text-decoration: none;
+  color: #aaaaaa;
+  text-transform: uppercase;
+  font-weight: bold;
+  transition: all 250ms linear 0s;
+  cursor: pointer;
+}
+
+.navtext :hover {
+  color: #ffffff;
 }
 
 .navSearch {
@@ -81,28 +86,8 @@ strong {
   outline: none;
 }
 
-.navtext-left {
-  float: left;
-}
-
 .navtext-active {
   background-color: #666666;
-}
-
-
-.background {
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-attachment: fixed;
-  background-position: center;
-  filter: blur(7px);
-  opacity: 0.4;
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 0;
 }
 
 .footer {
@@ -113,7 +98,6 @@ strong {
 }
 
 .footertext {
-  font-family: "Source Sans Pro", sans-serif;
   color: #888888;
   font-size: 12px;
 }
@@ -130,11 +114,10 @@ strong {
 .messageText {
   color: black;
   font-size: 1em;
-  font-family: "Source Sans Pro", sans-serif;
 }
 
 @media only screen and (max-width: 767px) {
   .navbar {
-    visibility: hidden;
+    display: none;
   }
 }

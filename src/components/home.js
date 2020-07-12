@@ -7,12 +7,11 @@ import Footer from './footer';
 import BG from './background';
 
 function Home() {
-
   return (
     <div className="wrapper">
-      <BG image={ true } />
+      <BG />
       <div className="content home">
-        <NavBar active="navhome" />
+        <NavBar />
         <div className="flex">
           <h1 className="title">
               <strong>MTG Investor's Grail</strong>{' '}

@@ -39,10 +39,6 @@
 	outline: none;
 }
 
-::placeholder {
-	font-family: 'Source Sans Pro', sans-serif;
-}
-
 @media only screen and (max-width: 767px) {
   .flex {
 		justify-content: flex-start;

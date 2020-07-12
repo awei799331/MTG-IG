@@ -22,7 +22,7 @@
 
 @keyframes navbarHover {
     from {background-color: #222222;}
-    to {background-color: #888888;}
+    to {background-color: #009358;}
 }
 
 .navbarHovered {
@@ -32,7 +32,7 @@
 }
 
 @keyframes navbarUnhover {
-    from {background-color: #888888;}
+    from {background-color: #009358;}
     to {background-color: #222222;}
 }
 

@@ -8,7 +8,6 @@
 .registerform {
     padding: 10px;
     color: white;
-    font-family: "Source Sans Pro", sans-serif;
     border-left: transparent;
     border-right: transparent;
 }
@@ -44,7 +43,6 @@
     border-style: solid;
     border-width: 2px;
     color: white;
-    font-family: "Source Sans Pro", sans-serif;
     font-size: 1.5em;
     padding: 3px 20px;
 }
@@ -52,7 +50,6 @@
 .registerButton {
     font-size: 1em;
     font-weight: 400;
-    font-family: "Source Sans Pro", sans-serif;
     background-color: transparent;
     color: white;
     border-color: white;
