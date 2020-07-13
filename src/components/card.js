@@ -72,7 +72,16 @@ function Card() {
             <div className="singleCard">
               { response.image_uris ?
                 <>
-                  <img alt="card" className="cardImg" src={ response.image_uris.normal } />
+                  <ImageWrapper>
+                    <FlipImg alt="card" src={ response.image_uris.normal } />
+                    <ButtonWrapper>
+                    <Link to={`/search?q=oracle_id%3A${ fixedEncodeURIComponent(response.oracle_id) }&unique=prints`} >
+                      <Button>
+                        <p>Search for all printings</p>
+                      </Button>
+                    </Link>
+                    </ButtonWrapper>
+                  </ImageWrapper>
                   <div className="cardData">
                     <CardName>
                       { response.name }
@@ -93,11 +102,6 @@ function Card() {
                         <span>{ response.toughness }</span>
                       </PT>
                     }
-                    <Link to={`/search?q=oracle_id%3A${ fixedEncodeURIComponent(response.oracle_id) }&unique=prints`} >
-                      <button>
-                        <span>Search for all printings</span>
-                      </button>
-                    </Link>
                   </div>
                 </> :
 
@@ -105,7 +109,16 @@ function Card() {
                 <>
                   <ImageWrapper>
                     <FlipImg alt="card" src={ response.card_faces[cardSide].image_uris.normal } />
-                    <button onClick={ flipCard }>Flip</button>
+                    <ButtonWrapper>
+                      <FlipButton onClick={ flipCard }>
+                        <p>Flip</p>
+                      </FlipButton>
+                      <Link to={`/search?q=oracle_id%3A${ fixedEncodeURIComponent(response.oracle_id) }&unique=prints`} >
+                        <Button>
+                            <p>Search for all printings</p>
+                        </Button>
+                      </Link>
+                    </ButtonWrapper>
                   </ImageWrapper>
                   <div className="cardData">
                     <CardName>
@@ -127,11 +140,6 @@ function Card() {
                         <span>{ response.card_faces[cardSide].toughness }</span>
                       </PT>
                     }
-                    <Link to={`/search?q=oracle_id%3A${ fixedEncodeURIComponent(response.oracle_id) }&unique=prints`} >
-                      <button>
-                        <span>Search for all printings</span>
-                      </button>
-                    </Link>
                   </div>
                 </> :
 
@@ -160,7 +168,7 @@ function Card() {
 const ImageWrapper = styled.div`
   display: flex;
   flex-flow: column nowrap;
-  align-items: flex-start;
+  align-items: center;
   justify-content: flex-start;
   margin: 25px;
 `;
@@ -192,7 +200,6 @@ const CardType = styled.p`
   margin: 0 32px;
   line-height: 24px;
   padding: 32px 0;
-  border-bottom: 1px solid #d6d6d6;
 `;
 
 const CardDesc = styled.p`
@@ -224,6 +231,107 @@ const PT = styled.p`
   padding: 16px 32px 16px;
   white-space: pre-line;
   border-bottom: 1px solid #d6d6d6;
+`;
+
+const ButtonWrapper = styled.div`
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+`;
+
+const Button = styled.div`
+  margin: 16px;
+  background-color: #00623a;
+  border: none;
+  text-decoration: none;
+  width: 220px;
+  height: 39px;
+  line-height: 39px;
+  position: relative;
+  overflow: hidden;
+  z-index: 0;
+
+  &:before {
+    content: '';
+    width: 100%;
+    height: 100%;
+    background-color: #00c474;
+    position: absolute;
+    transition: all 0.5s ease;
+    top: 0;
+    left: -220px;
+    z-index: 0;
+  }
+
+  & > p {
+    font-size: 14px;
+    font-weight: 700;
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    color: #fff;
+    z-index: 1;
+    position: relative;
+    transition: all 0.5s ease;
+  }
+
+  &:hover:before {
+    left: 0;
+  }
+
+  &:hover > p {
+    color: black;
+  }
+`;
+
+const FlipButton = styled.div`
+  margin: 16px;
+  background-color: #00623a;
+  border: none;
+  text-decoration: none;
+  width: 65px;
+  height: 39px;
+  cursor: pointer;
+  line-height: 39px;
+  position: relative;
+  overflow: hidden;
+  z-index: 0;
+
+  & > p {
+    font-size: 14px;
+    font-weight: 700;
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    color: #fff;
+    z-index: 1;
+    position: relative;
+    transition: all 0.5s ease;
+  }
+
+  &:before {
+    content: '';
+    width: 100%;
+    height: 100%;
+    background-color: #00c474;
+    position: absolute;
+    transition: all 0.5s ease;
+    top: 0;
+    left: -220px;
+    z-index: 0;
+  }
+
+  &:hover:before {
+    left: 0;
+  }
+
+  &:hover > p {
+    color: black;
+  }
 `;
 
 export { Card as default };

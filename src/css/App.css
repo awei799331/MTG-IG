@@ -9,6 +9,11 @@ strong {
   font-weight: bold;
 }
 
+p, a, span, button {
+  text-decoration: none;
+  font-family: 'Open Sans', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Oxygen', 'Helevetica Neue', 'Arial', sans-serif;
+}
+
 :focus {
   outline: none;
 }
@@ -67,7 +72,6 @@ strong {
 
 .navtext ::before {
   content: '';
-  display: block;
   border-top: 4px solid #009358;
   top: 0;
   width: 0;
@@ -79,7 +83,7 @@ strong {
 
 .navtext :hover::before {
   animation: underline 0.5s;
-  animation-fill-mode: linear;
+  animation-fill-mode: forwards;
 }
 
 @keyframes underline {
