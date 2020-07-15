@@ -81,8 +81,8 @@ function Search(props) {
             <Redirect to={`/card/${ fixedEncodeURIComponent(response.data[0].id) }`} /> :
             
             renderType === 'none' ?
-            <div style={{ fontSize: '4em' }}>
-              None
+            <div className="load">
+              Error
             </div> :
 
             <div />
@@ -123,7 +123,7 @@ function MultiSearch(props) {
             className="multiCard"
             target="_blank"
             rel="noopener noreferrer"
-            href={`https://shop.tcgplayer.com/product/productsearch?id=${card.tcgplayer_id}&utm_campaign=affiliate&utm_medium=MTGInvestorsGrail&utm_source=MTGInvestorsGrail`}
+            href={`https://shop.tcgplayer.com/product/productsearch?id=${cardArray[0][i].tcgplayer_id}&utm_campaign=affiliate&utm_medium=MTGInvestorsGrail&utm_source=MTGInvestorsGrail`}
             ><strong>
               Buy non-foil:&nbsp;
               <span style={{ color: "#00623B"}} >
@@ -136,7 +136,7 @@ function MultiSearch(props) {
             className="multiCard"
             target="_blank"
             rel="noopener noreferrer"
-            href={`https://shop.tcgplayer.com/product/productsearch?id=${card.tcgplayer_id}&utm_campaign=affiliate&utm_medium=MTGInvestorsGrail&utm_source=MTGInvestorsGrail`}
+            href={`https://shop.tcgplayer.com/product/productsearch?id=${cardArray[0][i].tcgplayer_id}&utm_campaign=affiliate&utm_medium=MTGInvestorsGrail&utm_source=MTGInvestorsGrail`}
             ><strong>
               Buy foil:&nbsp;
               <span style={{ color: "#00623B"}} >

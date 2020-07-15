@@ -27,6 +27,7 @@ function Card() {
         })
         .then(res => {
           setResponse(res.data);
+          console.log(res.data);
           return res.data;
         })
         .then(res => {
@@ -71,17 +72,36 @@ function Card() {
             renderType === 'single' ?
             <div className="singleCard">
               { response.image_uris ?
+              <ImageWrapper>
+                <FlipImg alt="card" src={ response.image_uris.normal } />
+                <ButtonWrapper>
+                  <Link to={`/search?q=oracle_id%3A${ fixedEncodeURIComponent(response.oracle_id) }&unique=prints`} >
+                    <Button>
+                      <span className="material-icons">search</span>&nbsp;
+                      <p>All printings</p>
+                    </Button>
+                  </Link>
+                </ButtonWrapper>
+              </ImageWrapper> :
+
+              <ImageWrapper>
+                <FlipImg alt="card" src={ response.card_faces[cardSide].image_uris.normal } />
+                <ButtonWrapper>
+                  <FlipButton onClick={ flipCard }>
+                    <p>Flip</p>
+                  </FlipButton>
+                  <Link to={`/search?q=oracle_id%3A${ fixedEncodeURIComponent(response.oracle_id) }&unique=prints`} >
+                    <Button>
+                      <span className="material-icons">search</span>&nbsp;
+                      <p>All printings</p>
+                    </Button>
+                  </Link>
+                </ButtonWrapper>
+              </ImageWrapper>
+              }
+
+              { !response.card_faces ?
                 <>
-                  <ImageWrapper>
-                    <FlipImg alt="card" src={ response.image_uris.normal } />
-                    <ButtonWrapper>
-                    <Link to={`/search?q=oracle_id%3A${ fixedEncodeURIComponent(response.oracle_id) }&unique=prints`} >
-                      <Button>
-                        <p>Search for all printings</p>
-                      </Button>
-                    </Link>
-                    </ButtonWrapper>
-                  </ImageWrapper>
                   <div className="cardData">
                     <CardName>
                       { response.name }
@@ -97,7 +117,7 @@ function Card() {
                     </CardFlavor>
                     { (response.power && response.toughness) &&
                       <PT>
-                        Power / Toughness:&nbsp;
+                        <b>Power / Toughness:&nbsp;</b>
                         <span>{ response.power }</span>&nbsp;/&nbsp;
                         <span>{ response.toughness }</span>
                       </PT>
@@ -107,19 +127,6 @@ function Card() {
 
                 response.card_faces ?
                 <>
-                  <ImageWrapper>
-                    <FlipImg alt="card" src={ response.card_faces[cardSide].image_uris.normal } />
-                    <ButtonWrapper>
-                      <FlipButton onClick={ flipCard }>
-                        <p>Flip</p>
-                      </FlipButton>
-                      <Link to={`/search?q=oracle_id%3A${ fixedEncodeURIComponent(response.oracle_id) }&unique=prints`} >
-                        <Button>
-                            <p>Search for all printings</p>
-                        </Button>
-                      </Link>
-                    </ButtonWrapper>
-                  </ImageWrapper>
                   <div className="cardData">
                     <CardName>
                       { response.card_faces[cardSide].name }
@@ -135,16 +142,46 @@ function Card() {
                     </CardFlavor>
                     { (response.card_faces[cardSide].power && response.card_faces[cardSide].toughness) &&
                       <PT>
-                        Power / Toughness:&nbsp;
+                        <b>Power / Toughness:&nbsp;</b>
                         <span>{ response.card_faces[cardSide].power }</span>&nbsp;/&nbsp;
                         <span>{ response.card_faces[cardSide].toughness }</span>
                       </PT>
                     }
                   </div>
-                </> :
-
-                <img alt="No data" className="cardImg" />
+                </> : <div />
               }
+              <PricesWrapper>
+                <PricesHeader>Purchase on TCGPlayer</PricesHeader>
+                { response.prices.usd !== null ?
+                  <PriceText>${response.prices.usd} USD</PriceText> :
+                  response.prices.usd_foil !== null ?
+                  <PriceText>${response.prices.usd_foil} USD</PriceText> :
+                  <PriceText>Price not available</PriceText>
+                }
+                <PriceButtonWrapper>
+                { response.prices.usd !== null &&
+                  <a
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  href={`https://shop.tcgplayer.com/product/productsearch?id=${response.tcgplayer_id}&utm_campaign=affiliate&utm_medium=MTGInvestorsGrail&utm_source=MTGInvestorsGrail`}>
+                    <PricesButton><p>Buy</p></PricesButton>
+                  </a>
+                }
+                { response.prices.usd_foil !== null &&
+                  <a
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  href={`https://shop.tcgplayer.com/product/productsearch?id=${response.tcgplayer_id}&utm_campaign=affiliate&utm_medium=MTGInvestorsGrail&utm_source=MTGInvestorsGrail`}>
+                    <PricesButton><p>Buy Foil</p></PricesButton>
+                  </a>
+                }
+                </PriceButtonWrapper>
+
+
+
+                
+                
+              </PricesWrapper>
               <div className="graph">
                 Graphs under construction
               </div>
@@ -170,7 +207,7 @@ const ImageWrapper = styled.div`
   flex-flow: column nowrap;
   align-items: center;
   justify-content: flex-start;
-  margin: 25px;
+  margin: 0 25px 25px;
 `;
 
 const FlipImg = styled.img`
@@ -225,12 +262,14 @@ const CardFlavor = styled.p`
 
 const PT = styled.p`
   font-size: 16px;
-  font-weight: 400;
   color: #000000;
   margin: 0;
   padding: 16px 32px 16px;
-  white-space: pre-line;
   border-bottom: 1px solid #d6d6d6;
+  
+  & strong {
+    font-weight: 700;
+  }
 `;
 
 const ButtonWrapper = styled.div`
@@ -239,10 +278,17 @@ const ButtonWrapper = styled.div`
   align-items: center;
   justify-content: space-between;
   width: 100%;
+
+  & > :only-child {
+    margin: 16px auto;
+  }
+
+  & > a {
+    margin: 0;
+  }
 `;
 
 const Button = styled.div`
-  margin: 16px;
   background-color: #00623a;
   border: none;
   text-decoration: none;
@@ -252,6 +298,9 @@ const Button = styled.div`
   position: relative;
   overflow: hidden;
   z-index: 0;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
 
   &:before {
     content: '';
@@ -269,8 +318,19 @@ const Button = styled.div`
     font-size: 14px;
     font-weight: 700;
     margin: 0;
-    width: 100%;
     height: 100%;
+    text-align: center;
+    color: #fff;
+    z-index: 1;
+    position: relative;
+    transition: all 0.5s ease;
+  }
+
+  & > span {
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0;
+    line-height: unset;
     text-align: center;
     color: #fff;
     z-index: 1;
@@ -280,10 +340,6 @@ const Button = styled.div`
 
   &:hover:before {
     left: 0;
-  }
-
-  &:hover > p {
-    color: black;
   }
 `;
 
@@ -299,6 +355,7 @@ const FlipButton = styled.div`
   position: relative;
   overflow: hidden;
   z-index: 0;
+  user-select: none;
 
   & > p {
     font-size: 14px;
@@ -321,17 +378,97 @@ const FlipButton = styled.div`
     position: absolute;
     transition: all 0.5s ease;
     top: 0;
-    left: -220px;
+    left: -100%;
     z-index: 0;
   }
 
   &:hover:before {
     left: 0;
   }
+`;
 
-  &:hover > p {
-    color: black;
+const PricesWrapper = styled.div`
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: stretch;
+  justify-content: flex-start;
+  background-color: #f6f6ff;
+  border: 1px solid #d6d6d6;
+  border-top: none;
+  margin: 0 25px 25px;
+  width: 100%;
+  max-width: 366px;
+`;
+
+const PriceButtonWrapper = styled.div`
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: space-evenly;
+  background-color: #f6f6ff;
+  border-bottom: 1px solid #d6d6d6;
+  border-top: none;
+  padding: 0 25px 25px;
+  max-width: 400px;
+`;
+
+const PricesButton = styled.div`
+  background-color: #00623a;
+  border: none;
+  text-decoration: none;
+  width: 100px;
+  height: 39px;
+  line-height: 39px;
+  position: relative;
+  overflow: hidden;
+  z-index: 0;
+
+  &:before {
+    content: '';
+    width: 100%;
+    height: 100%;
+    background-color: #00c474;
+    position: absolute;
+    transition: all 0.5s ease;
+    top: 0;
+    left: -100%;
+    z-index: 0;
   }
+
+  & > p {
+    font-size: 14px;
+    font-weight: 700;
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    color: #fff;
+    z-index: 1;
+    position: relative;
+    transition: all 0.5s ease;
+  }
+
+  &:hover:before {
+    left: 0;
+  }
+`;
+
+const PricesHeader = styled.p`
+  margin: 0;
+  padding: 4px;
+  font-size: 14px;
+  border-top: 4px solid #00623a;
+  font-weight: 700;
+  text-align: left;
+`;
+
+const PriceText = styled.p`
+  margin: 0;
+  padding: 32px;
+  font-size: 40px;
+  border-top: 1px solid #d6d6d6;
+  font-weight: 700;
+  text-align: center;
 `;
 
 export { Card as default };
