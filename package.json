@@ -1,6 +1,5 @@
 {
   "name": "mtg-ig",
-  "homepage": "https://awei799331.github.io/MTG-IG",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
