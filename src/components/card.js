@@ -74,14 +74,6 @@ function Card() {
               { response.image_uris ?
               <ImageWrapper>
                 <FlipImg alt="card" src={ response.image_uris.normal } />
-                <ButtonWrapper>
-                  <Link to={`/search?q=oracle_id%3A${ fixedEncodeURIComponent(response.oracle_id) }&unique=prints`} >
-                    <Button>
-                      <span className="material-icons">search</span>&nbsp;
-                      <p>All printings</p>
-                    </Button>
-                  </Link>
-                </ButtonWrapper>
               </ImageWrapper> :
 
               <ImageWrapper>
@@ -90,12 +82,6 @@ function Card() {
                   <FlipButton onClick={ flipCard }>
                     <p>Flip</p>
                   </FlipButton>
-                  <Link to={`/search?q=oracle_id%3A${ fixedEncodeURIComponent(response.oracle_id) }&unique=prints`} >
-                    <Button>
-                      <span className="material-icons">search</span>&nbsp;
-                      <p>All printings</p>
-                    </Button>
-                  </Link>
                 </ButtonWrapper>
               </ImageWrapper>
               }
@@ -182,6 +168,9 @@ function Card() {
                   <PricesHeader>
                     Helpful Links
                   </PricesHeader>
+                  <UtilityText to={`/search?q=oracle_id%3A${ fixedEncodeURIComponent(response.oracle_id) }&unique=prints`}>
+                    View all printings of this card
+                  </UtilityText>
                   <UtilityText to={`/search?q=set%3A${ fixedEncodeURIComponent(response.set) }&unique=prints`}>
                     View all cards in set
                   </UtilityText>
@@ -296,61 +285,6 @@ const ButtonWrapper = styled.div`
   }
 `;
 
-const Button = styled.div`
-  background-color: #00623a;
-  border: none;
-  text-decoration: none;
-  width: 220px;
-  height: 39px;
-  line-height: 39px;
-  position: relative;
-  overflow: hidden;
-  z-index: 0;
-  display: flex;
-  flex-flow: row nowrap;
-  justify-content: center;
-
-  &:before {
-    content: '';
-    width: 100%;
-    height: 100%;
-    background-color: #00c474;
-    position: absolute;
-    transition: all 0.5s ease;
-    top: 0;
-    left: -220px;
-    z-index: 0;
-  }
-
-  & > p {
-    font-size: 14px;
-    font-weight: 700;
-    margin: 0;
-    height: 100%;
-    text-align: center;
-    color: #fff;
-    z-index: 1;
-    position: relative;
-    transition: all 0.5s ease;
-  }
-
-  & > span {
-    font-size: 24px;
-    font-weight: 700;
-    margin: 0;
-    line-height: unset;
-    text-align: center;
-    color: #fff;
-    z-index: 1;
-    position: relative;
-    transition: all 0.5s ease;
-  }
-
-  &:hover:before {
-    left: 0;
-  }
-`;
-
 const FlipButton = styled.div`
   margin: 16px;
   background-color: #00623a;
@@ -409,14 +343,6 @@ const PricesWrapper = styled.div`
   border: 1px solid #d6d6d6;
   border-top: none;
   width: 100%;
-
-  &:before {
-    content: '';
-    position: absolute;
-    width: 100%;
-    max-width: 366px;
-    border-top: 4px solid #00623a;
-  }
 `;
 
 const PriceButtonWrapper = styled.div`
@@ -478,6 +404,7 @@ const PricesHeader = styled.p`
   font-size: 14px;
   font-weight: 700;
   text-align: left;
+  border-top: 4px solid #00623a;
 `;
 
 const PriceText = styled.p`
@@ -499,14 +426,6 @@ const Utility = styled.div`
   width: 100%;
   max-width: 366px;
   margin-top: 25px;
-
-  &:before {
-    content: '';
-    position: absolute;
-    width: 100%;
-    max-width: 366px;
-    border-top: 4px solid #00623a;
-  }
 `;
 
 const UtilityText = styled(Link)`
