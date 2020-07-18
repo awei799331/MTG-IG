@@ -150,38 +150,46 @@ function Card() {
                   </div>
                 </> : <div />
               }
-              <PricesWrapper>
-                <PricesHeader>Purchase on TCGPlayer</PricesHeader>
-                { response.prices.usd !== null ?
-                  <PriceText>${response.prices.usd} USD</PriceText> :
-                  response.prices.usd_foil !== null ?
-                  <PriceText>${response.prices.usd_foil} USD</PriceText> :
-                  <PriceText>Price not available</PriceText>
-                }
-                <PriceButtonWrapper>
-                { response.prices.usd !== null &&
-                  <a
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  href={`https://shop.tcgplayer.com/product/productsearch?id=${response.tcgplayer_id}&utm_campaign=affiliate&utm_medium=MTGInvestorsGrail&utm_source=MTGInvestorsGrail`}>
-                    <PricesButton><p>Buy</p></PricesButton>
-                  </a>
-                }
-                { response.prices.usd_foil !== null &&
-                  <a
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  href={`https://shop.tcgplayer.com/product/productsearch?id=${response.tcgplayer_id}&utm_campaign=affiliate&utm_medium=MTGInvestorsGrail&utm_source=MTGInvestorsGrail`}>
-                    <PricesButton><p>Buy Foil</p></PricesButton>
-                  </a>
-                }
-                </PriceButtonWrapper>
-
-
-
-                
-                
-              </PricesWrapper>
+              <UtilityWrapper>
+                <PricesWrapper>
+                  <PricesHeader>Purchase on TCGPlayer</PricesHeader>
+                    { response.prices.usd !== null ?
+                      <PriceText>${response.prices.usd} USD</PriceText> :
+                      response.prices.usd_foil !== null ?
+                      <PriceText>${response.prices.usd_foil} USD</PriceText> :
+                      <PriceText>Price not available</PriceText>
+                    }
+                    <PriceButtonWrapper>
+                    { response.prices.usd !== null &&
+                      <a
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      href={`https://shop.tcgplayer.com/product/productsearch?id=${response.tcgplayer_id}&utm_campaign=affiliate&utm_medium=MTGInvestorsGrail&utm_source=MTGInvestorsGrail`}>
+                        <PricesButton><p>Buy</p></PricesButton>
+                      </a>
+                    }
+                    { response.prices.usd_foil !== null &&
+                      <a
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      href={`https://shop.tcgplayer.com/product/productsearch?id=${response.tcgplayer_id}&utm_campaign=affiliate&utm_medium=MTGInvestorsGrail&utm_source=MTGInvestorsGrail`}>
+                        <PricesButton><p>Buy Foil</p></PricesButton>
+                      </a>
+                    }
+                  </PriceButtonWrapper>
+                </PricesWrapper>
+                <Utility>
+                  <PricesHeader>
+                    Helpful Links
+                  </PricesHeader>
+                  <UtilityText to={`/search?q=set%3A${ fixedEncodeURIComponent(response.set) }&unique=prints`}>
+                    View all cards in set
+                  </UtilityText>
+                  <UtilityText to={`/search?q=oracle_id%3A${ fixedEncodeURIComponent(response.oracle_id) }+lang%3Aany&unique=prints`}>
+                    View all languages
+                  </UtilityText>
+                </Utility>
+              </UtilityWrapper>
               <div className="graph">
                 Graphs under construction
               </div>
@@ -233,7 +241,7 @@ const CardName = styled.p`
 const CardType = styled.p`
   font-size: 24px;
   font-weight: 700;
-  color: #b3b3b3;
+  color: #a2a2a2;
   margin: 0 32px;
   line-height: 24px;
   padding: 32px 0;
@@ -387,17 +395,28 @@ const FlipButton = styled.div`
   }
 `;
 
-const PricesWrapper = styled.div`
+const UtilityWrapper = styled.div`
   display: flex;
   flex-flow: column nowrap;
-  align-items: stretch;
   justify-content: flex-start;
-  background-color: #f6f6ff;
-  border: 1px solid #d6d6d6;
-  border-top: none;
   margin: 0 25px 25px;
   width: 100%;
   max-width: 366px;
+`;
+
+const PricesWrapper = styled.div`
+  background-color: #f6f6ff;
+  border: 1px solid #d6d6d6;
+  border-top: none;
+  width: 100%;
+
+  &:before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    max-width: 366px;
+    border-top: 4px solid #00623a;
+  }
 `;
 
 const PriceButtonWrapper = styled.div`
@@ -457,7 +476,6 @@ const PricesHeader = styled.p`
   margin: 0;
   padding: 4px;
   font-size: 14px;
-  border-top: 4px solid #00623a;
   font-weight: 700;
   text-align: left;
 `;
@@ -469,6 +487,41 @@ const PriceText = styled.p`
   border-top: 1px solid #d6d6d6;
   font-weight: 700;
   text-align: center;
+`;
+
+const Utility = styled.div`
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: stretch;
+  background-color: #f6f6ff;
+  border: 1px solid #d6d6d6;
+  border-top: none;
+  width: 100%;
+  max-width: 366px;
+  margin-top: 25px;
+
+  &:before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    max-width: 366px;
+    border-top: 4px solid #00623a;
+  }
+`;
+
+const UtilityText = styled(Link)`
+  margin: 0;
+  padding: 6px;
+  font-size: 14px;
+  font-weight: 400;
+  text-align: left;
+  text-decoration: none;
+  color: #222222;
+  border-top: 1px solid #d6d6d6;
+
+  &:hover {
+    background-color: #c4c4c4;
+  }
 `;
 
 export { Card as default };
