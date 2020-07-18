@@ -18,5 +18,17 @@
         "react"
     ],
     "rules": {
+        "max-len": ["error", 200],
+        "linebreak-style": ["none", "windows"],
+        "template-curly-spacing": "off",
+        "quotes": "off",
+        "comma-dangle": "off",
+        "arrow-parens": "off",
+        "keyword-spacing": "off",
+        "react/jsx-filename-extension": "off",
+        "react/jsx-indent": "off",
+        "react/no-unescaped-entities": "off",
+        "no-nested-ternary": "off",
+        "operator-linebreak": "off"
     }
 }
