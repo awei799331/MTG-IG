@@ -63,13 +63,13 @@ const CollapseMenu = (props) => {
   if (props.navbarState === true) {
     return (
       <CollapseWrapper>
-        <CollapseNavNavLinks>
+        <CollapseNavLinks>
           <li><NavLink to="/howItWorks">How it Works</NavLink></li>
           <li><NavLink to="/about">About</NavLink></li>
           <li><NavLink to="/contact">Contact</NavLink></li>
           <li><NavLink to="/profile">Profile</NavLink></li>
           <li><NavLink to="/login">Login</NavLink></li>
-        </CollapseNavNavLinks>
+        </CollapseNavLinks>
       </CollapseWrapper>
     );
   }
@@ -131,7 +131,6 @@ const BurgerWrapper = styled.div`
     width: 33px;
     height: 3px;
     margin: 0 20px 10px 20px;
-    transition: all ease-in-out 0.2s;
   }
 `;
 
@@ -142,14 +141,10 @@ const CollapseWrapper = styled.div`
   left: 0;
 `;
 
-const CollapseNavNavLinks = styled.ul`
+const CollapseNavLinks = styled.ul`
   list-style-type: none;
   padding: 28px;
   width: 100vw;
-
-  & li {
-    transition: all 300ms linear 0s;
-  }
 
   & a {
     font-size: 14px;

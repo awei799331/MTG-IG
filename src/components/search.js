@@ -12,11 +12,13 @@ import NavBar from './navbar';
 import Footer from './footer';
 import BG from './background';
 import { fixedEncodeURIComponent, decodeQueryParam } from '../utils/utils';
+import { SearchBar } from './searchBar';
 
 function Search(props) {
   const [redir, setRedir] = useState(false);
   const [response, setResponse] = useState({});
   const [renderType, setRenderType] = useState('loading');
+  const [q, setQ] = useState('');
   useEffect(() => {
     const query = queryString.parse(props.location.search);
     for (let prop in query) {
@@ -25,6 +27,7 @@ function Search(props) {
     if (query.q.trim() === '') {
       setRedir(true);
     } else {
+      setQ(query.q);
       axios.get('https://api.scryfall.com/cards/search', {
         params: {
           order: 'name',
@@ -38,7 +41,7 @@ function Search(props) {
           return res.data;
         })
         .then(res => {
-          if (res.object === 'list' && res.data.length > 1) {
+          if (res.object === 'list' && (res.data.length > 1 || query.redirected)) {
             setRenderType('multi');
           } else if (res.object === 'list' && res.data.length === 1) {
             setRenderType('single');
@@ -51,7 +54,7 @@ function Search(props) {
           console.log(e);
         });
     }
-  }, [props.location.search]);
+  }, [props.location.search, props.redirected]);
 
   return(
     <>
@@ -59,7 +62,6 @@ function Search(props) {
       <BG />
         <div className="content">
           <NavBar />
-
           { redir ?
             <Redirect to='/' /> :
             
@@ -75,7 +77,7 @@ function Search(props) {
             </div> :
 
             renderType === 'multi' ?
-            <MultiSearch data={ response } /> :
+            <MultiSearch data={ response } q={ q } /> :
 
             renderType === 'single' ?
             <Redirect to={`/card/${ fixedEncodeURIComponent(response.data[0].id) }`} /> :
@@ -155,6 +157,12 @@ function MultiSearch(props) {
 
   return(
     <div className="multiSearch">
+      <Info>
+        <SearchBar />
+        <p>
+          Showing results for: <b>{ props.q }</b>
+        </p>
+      </Info>
       { multiSearchItem }
     </div>
   );
@@ -163,6 +171,15 @@ function MultiSearch(props) {
 const LinkWrapper = styled(Link)`
   margin: 10px auto;
   height: 340px;
+`;
+
+const Info = styled.div`
+  width: 75%;
+  margin: 0 12.5%;
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: flex-start:
+  justify-content: flex-start;
 `;
 
 export { Search as default };

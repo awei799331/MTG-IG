@@ -1,7 +1,7 @@
 import React from 'react';
 import '../css/App.css';
 import '../css/home.css';
-import HomeSearch from './searchBar';
+import { HomeSearch } from './searchBar';
 import NavBar from './navbar';
 import Footer from './footer';
 import BG from './background';

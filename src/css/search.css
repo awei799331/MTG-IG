@@ -56,14 +56,19 @@
   width: auto;
 }
 
-.singleCard {
+.singleWrapper {
   background-color: #f2f2fd;
+  width: calc(100% - 50px);
+  padding: 50px 25px;
+}
+
+.singleCard {
   display: flex;
   flex-flow: row wrap;
   justify-content: center;
   align-items: flex-start;
-  width: 90%;
-  padding: 50px 5%;
+  width: 100%;
+  max-width: 1184px;
   margin: 0 auto;
 }
 
@@ -82,7 +87,7 @@
   background-color: #f6f6ff;
   border: 1px solid #d6d6d6;
   border-top: none;
-  margin: 0 0 25px;
+  margin: 0 25px 25px;
   width: 100%;
   max-width: 400px;
 }
@@ -108,5 +113,9 @@
   .singleCard {
     width: 80%;
     padding: 50px 10%;
+  }
+
+  .cardData {
+    margin: 0 0 25px 0;
   }
 }
