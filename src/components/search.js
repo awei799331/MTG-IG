@@ -76,6 +76,8 @@ function Search(props) {
               </div>
             </div> :
 
+
+
             renderType === 'multi' ?
             <MultiSearch data={ response } q={ q } /> :
 
@@ -156,17 +158,32 @@ function MultiSearch(props) {
   );
 
   return(
-    <div className="multiSearch">
+    <Wrapper>
       <Info>
-        <SearchBar />
-        <p>
-          Showing results for: <b>{ props.q }</b>
-        </p>
-      </Info>
-      { multiSearchItem }
-    </div>
+          <SearchBar />
+          <p>
+            Showing results for: <b>{ props.q }</b>
+          </p>
+        </Info>
+      <div className="multiSearch">
+        { multiSearchItem }
+      </div>
+    </Wrapper>
   );
 }
+
+const Wrapper = styled.div`
+  background-color: #f2f2fd;
+  width: 75%;
+  padding: 50px 0;
+  margin: 0 12.5%;
+
+  @media (max-width: 767px) {
+    width: 100%;
+    padding: 0;
+    margin: 0;
+  }
+`;
 
 const LinkWrapper = styled(Link)`
   margin: 10px auto;

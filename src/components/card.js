@@ -71,10 +71,10 @@ function Card() {
 
                 renderType === 'single' ? (
               <div className="singleWrapper">
+                <Info>
+                  <SearchBar />
+                </Info>
                 <div className="singleCard">
-                  <Info>
-                    <SearchBar />
-                  </Info>
                   { response.image_uris ? (
                   <ImageWrapper>
                     <FlipImg alt="card" src={response.image_uris.normal} />
@@ -215,11 +215,17 @@ function Card() {
 }
 
 const Info = styled.div`
-  width: 75%;
+  width: 56.25%;
+  margin: 0 21.875%;
   display: flex;
   flex-flow: column nowrap;
   align-items: flex-start:
   justify-content: flex-start;
+
+  @media (max-width: 767px) {
+    width: 75%;
+    margin: 0 12.5%;
+  }
 `;
 
 const ImageWrapper = styled.div`

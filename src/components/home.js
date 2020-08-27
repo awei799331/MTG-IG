@@ -14,18 +14,12 @@ function Home() {
         <NavBar />
         <div className="flex">
           <h1 className="title">
-              <b>
-                MTG Investor's Grail
-              </b>
+              <b>MTG Investor's Grail</b>
               &nbsp;is the first&nbsp;
-              <b>
-                deep learning
-              </b>
+              <b>deep learning</b>
               &nbsp;based
               <br />
-              <b>
-                Magic: The Gathering
-              </b>
+              <b>Magic: The Gathering</b>
               &nbsp;card price predictor
           </h1>
           <HomeSearch />

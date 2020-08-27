@@ -8,7 +8,7 @@ function HomeSearch() {
   const [cardQuery, setCardQuery] = useState('');
 
   return(
-    <Form action="search">
+    <Form action="/search">
       <InputText
       autoComplete="off"
       value={ cardQuery }
@@ -49,6 +49,7 @@ const InputText = styled.input`
   }
 
   @media (max-width: 767px) {
+    width: unset;
     font-size: 16px;
 		height: 25px;
   }
@@ -58,7 +59,7 @@ function SearchBar() {
   const [cardQuery, setCardQuery] = useState('');
 
   return(
-    <Form2 action="search">
+    <Form2 action="/search">
       <InputText2
       autoComplete="off"
       value={ cardQuery }
@@ -78,22 +79,19 @@ const Form2 = styled.form`
 
 const InputText2 = styled.input`
   width: 100%;
-  max-width: 720px;
+  max-width: 640px;
   height: 20px;
   font-size: 16px;
-  padding: 5px;
   display: block;
-  background-color: #f6f6ff;
-  background-repeat: no-repeat;
-  background-position: 10px center;
-  border-color: black;
-  border-width: 1px;
-  border-style: solid;
+  background-color: transparent;
   outline: none;
   font-family: Open Sans, sans-serif;
+  border: none;
+  border-bottom: 3px solid #b3b3b3;
+  transition: 0.35s ease;
 
   &:focus {
-    border-color: #00c474;
+    border-bottom: 3px solid #00c474;
   }
 
   @media (max-width: 767px) {
