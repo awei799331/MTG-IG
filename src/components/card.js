@@ -217,6 +217,7 @@ function Card() {
 const Info = styled.div`
   width: 56.25%;
   margin: 0 21.875%;
+  padding-top: 50px;
   display: flex;
   flex-flow: column nowrap;
   align-items: flex-start:

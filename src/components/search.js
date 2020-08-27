@@ -175,12 +175,12 @@ function MultiSearch(props) {
 const Wrapper = styled.div`
   background-color: #f2f2fd;
   width: 75%;
-  padding: 50px 0;
+  padding-top: 50px;
   margin: 0 12.5%;
+  min-height: calc(100vh - 250px);
 
   @media (max-width: 767px) {
     width: 100%;
-    padding: 0;
     margin: 0;
   }
 `;
