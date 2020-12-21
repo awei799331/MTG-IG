@@ -5,6 +5,7 @@ import queryString from 'query-string';
 import PuffLoader from "react-spinners/PuffLoader";
 import { animated, useTrail } from 'react-spring';
 import styled from 'styled-components';
+import PropTypes from 'prop-types';
 
 import '../css/App.css';
 import '../css/search.css';
@@ -19,6 +20,8 @@ function Search(props) {
   const [response, setResponse] = useState({});
   const [renderType, setRenderType] = useState('loading');
   const [q, setQ] = useState('');
+  const [page, setPage] = useState(1);
+
   useEffect(() => {
     const query = queryString.parse(props.location.search);
     for (let prop in query) {
@@ -28,12 +31,15 @@ function Search(props) {
       setRedir(true);
     } else {
       setQ(query.q);
+      if (query.page) {
+        setPage(query.page);
+      }
       axios.get('https://api.scryfall.com/cards/search', {
         params: {
           order: 'name',
           unique: query.unique ? query.unique: 'card',
           q: query.q ? query.q : '',
-          page: query.q ? query.q : 1
+          page: query.page ? query.page : 1
         }
         })
         .then(res => {
@@ -79,7 +85,7 @@ function Search(props) {
 
 
             renderType === 'multi' ?
-            <MultiSearch data={ response } q={ q } /> :
+            <MultiSearch cards={ response } q={ q } page={ page } /> :
 
             renderType === 'single' ?
             <Redirect to={`/card/${ fixedEncodeURIComponent(response.data[0].id) }`} /> :
@@ -100,13 +106,13 @@ function Search(props) {
 }
 
 function MultiSearch(props) {
-  const cardArray = useState(props.data.data);
+  const cardArray = useState(props.cards.data);
 
   const trail = useTrail(cardArray[0].length, {
     config: { tension: 2000, friction: 150, delay: 100 },
     from: { opacity: 0 },
     to: { opacity: 1 },
-  })
+  });
 
   const multiSearchItem = trail.map((card, i) => 
     <animated.div style={ card } className="multiCardItem" key={ cardArray[0][i].id } >
@@ -161,9 +167,43 @@ function MultiSearch(props) {
     <Wrapper>
       <Info>
           <SearchBar />
-          <p>
-            Showing results for: <b>{ props.q }</b>
-          </p>
+          <InfoFlex>
+            <p>
+              Showing results for: <b>{ props.q }</b>
+            </p>
+            { props.cards.has_more ? 
+                <p>
+                  - of { props.cards.total_cards }
+                </p> :
+                <p>
+                  -{ props.cards.total_cards } of { props.cards.total_cards }
+                </p>
+            }
+            
+          </InfoFlex>
+          <InfoFlex>
+            <ButtonsFlex>
+              Helo
+            </ButtonsFlex>
+            <PaginationFlex>
+              <InfoButton to={ props.cards.next_page }>
+                &lt;&lt;
+              </InfoButton>
+              <InfoButton to={ props.cards.next_page }>
+                &lt;
+              </InfoButton>
+              <p>
+                &nbsp;{ props.page }&nbsp;
+              </p>
+              <InfoButton to={ props.cards.next_page }>
+                &gt;
+              </InfoButton>
+              <InfoButton to={ props.cards.next_page }>
+                &gt;&gt;
+              </InfoButton>
+            </PaginationFlex>
+          </InfoFlex>
+          
         </Info>
       <div className="multiSearch">
         { multiSearchItem }
@@ -190,6 +230,38 @@ const LinkWrapper = styled(Link)`
   height: 340px;
 `;
 
+const InfoFlex = styled.div`
+  width: 100%;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-between;
+`;
+
+const ButtonsFlex = styled.div`
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-start;
+  align-items: center;
+`;
+
+const PaginationFlex = styled.div`
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-end;
+  align-items: center;
+`;
+
+const InfoButton = styled(Link)`
+  color: #222222;
+  text-decoration: none;
+  background: none;
+  border: 1px solid #222222;
+  border-radius: 2px;
+  padding: 0 12px;
+  margin: 0 3px;
+  line-height: 18px;
+`;
+
 const Info = styled.div`
   width: 75%;
   margin: 0 12.5%;
@@ -198,5 +270,11 @@ const Info = styled.div`
   align-items: flex-start:
   justify-content: flex-start;
 `;
+
+MultiSearch.propTypes = {
+  cards: PropTypes.object.isRequired,
+  q: PropTypes.string.isRequired,
+  page: PropTypes.number.isRequired
+}
 
 export { Search as default };
