@@ -44,6 +44,11 @@
 	border-color: white;
 }
 
+::placeholder {
+	color: white;
+	opacity: 0.5;
+}
+
 @media only screen and (max-width: 767px) {
   .flex {
 		justify-content: flex-start;

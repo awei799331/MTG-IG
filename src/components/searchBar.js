@@ -16,6 +16,7 @@ function HomeSearch() {
       name="q"
       className="inputText"
       onChange={ e => setCardQuery(e.target.value) }
+      placeholder='Do you have the gut to search "black lotus?"'
       required
       />
     </form>
