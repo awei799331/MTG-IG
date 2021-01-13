@@ -1,5 +1,5 @@
 # Our application is currently under development!
-### [Please check it out here!](https://metinvest-dev.herokuapp.com)
+### [Please check it out here!](https://mtginvest-dev.herokuapp.com)
 
 # For our latest work, please view the 'dev' branch, not the master branch. Thanks!
 
