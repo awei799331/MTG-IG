@@ -1,12 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Redirect, Link } from 'react-router-dom'; // eslint-disable-line
-import axios from 'axios';
 import queryString from 'query-string';
 import PuffLoader from "react-spinners/PuffLoader";
-import { animated, useTrail } from 'react-spring';
+import { animated } from 'react-spring';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
-
 import '../css/App.css';
 import '../css/search.css';
 import NavBar from './navbar';
@@ -14,53 +12,31 @@ import Footer from './footer';
 import BG from './background';
 import { fixedEncodeURIComponent, decodeQueryParam } from '../utils/utils';
 import { SearchBar } from './searchBar';
+import { useSelector, useDispatch } from 'react-redux';
+import { requestScryfall } from '../actions/index';
 
 function Search(props) {
-  const [redir, setRedir] = useState(false);
-  const [response, setResponse] = useState({});
-  const [renderType, setRenderType] = useState('loading');
-  const [q, setQ] = useState('');
-  const [page, setPage] = useState(1);
+  const status = useSelector(state => state.responses.status);
+  const errorMessage = useSelector(state => state.responses.errorMessage);
+  const response = useSelector(state => state.responses.response);
+  const dispatch = useDispatch();
+
+  const query = useMemo(() => {
+    const queryTemp = queryString.parse(props.location.search);
+    for (let prop in queryTemp) {
+      queryTemp[prop] = decodeQueryParam(queryTemp[prop]);
+    }
+    return {
+      q: queryTemp.q,
+      page: queryTemp.page ? parseInt(queryTemp.page) : 1,
+      unique: queryTemp.unique ? queryTemp.unique: 'card'
+    };
+    
+  }, [props.location.search]);
 
   useEffect(() => {
-    const query = queryString.parse(props.location.search);
-    for (let prop in query) {
-      query[prop] = decodeQueryParam(query[prop]);
-    }
-    if (query.q.trim() === '') {
-      setRedir(true);
-    } else {
-      setQ(query.q);
-      if (query.page) {
-        setPage(query.page);
-      }
-      axios.get('https://api.scryfall.com/cards/search', {
-        params: {
-          order: 'name',
-          unique: query.unique ? query.unique: 'card',
-          q: query.q ? query.q : '',
-          page: query.page ? query.page : 1
-        }
-        })
-        .then(res => {
-          setResponse(res.data);
-          return res.data;
-        })
-        .then(res => {
-          if (res.object === 'list' && (res.data.length > 1 || query.redirected)) {
-            setRenderType('multi');
-          } else if (res.object === 'list' && res.data.length === 1) {
-            setRenderType('single');
-          } else {
-            setRenderType('none');
-          }
-        })
-        .catch(e => {
-          setRenderType('none');
-          console.log(e);
-        });
-    }
-  }, [props.location.search, props.redirected]);
+    dispatch(requestScryfall(query.q, query.unique, query.page));
+  }, [query]);
 
   return(
     <>
@@ -68,10 +44,7 @@ function Search(props) {
       <BG />
         <div className="content">
           <NavBar />
-          { redir ?
-            <Redirect to='/' /> :
-            
-            renderType === 'loading' ?
+          { status === 'loading' ?
             <div className="load">
               <div style={{ marginTop: '150px' }}>
                 <PuffLoader
@@ -82,22 +55,24 @@ function Search(props) {
               </div>
             </div> :
 
+            status === 'multi' ?
+            <MultiSearch cards={ response } query={ query } /> :
 
-
-            renderType === 'multi' ?
-            <MultiSearch cards={ response } q={ q } page={ page } /> :
-
-            renderType === 'single' ?
+            status === 'single' ?
             <Redirect to={`/card/${ fixedEncodeURIComponent(response.data[0].id) }`} /> :
             
-            renderType === 'none' ?
+            status === 'error' ?
             <div className="load">
-              Error
+              {{ errorMessage }}
+            </div> :
+
+            status === 'none' ?
+            <div className="load">
+              None
             </div> :
 
             <div />
           }
-
         </div>
         <Footer />
       </div>
@@ -106,53 +81,53 @@ function Search(props) {
 }
 
 function MultiSearch(props) {
-  const cardArray = useState(props.cards.data);
+  const query = useState(props.query);
+  const response = useSelector(state => state.responses.response);
 
-  const trail = useTrail(cardArray[0].length, {
-    config: { tension: 2000, friction: 150, delay: 100 },
-    from: { opacity: 0 },
-    to: { opacity: 1 },
-  });
+  const multiSearchItem = response.data.map((card, i) => 
+    <animated.div style={ card } className="multiCardItem" key={ response.data[i].id } >
+      <LinkWrapper to={`/card/${ fixedEncodeURIComponent(response.data[i].id) }`} >
+        { response.data[i].image_uris ?
+          <img alt="" className="multiCardImg" src={ response.data[i].image_uris.normal } /> :
 
-  const multiSearchItem = trail.map((card, i) => 
-    <animated.div style={ card } className="multiCardItem" key={ cardArray[0][i].id } >
-      <LinkWrapper to={`/card/${ fixedEncodeURIComponent(cardArray[0][i].id) }`} >
-        { cardArray[0][i].image_uris ?
-          <img alt="" className="multiCardImg" src={ cardArray[0][i].image_uris.normal } /> :
-
-          cardArray[0][i].card_faces ?
-          <img alt="" className="multiCardImg" src={ cardArray[0][i].card_faces[0].image_uris.normal } /> :
+          response.data[i].card_faces ?
+          <img alt="" className="multiCardImg" src={ response.data[i].card_faces[0].image_uris.normal } /> :
 
           <img alt="" className="multiCardImg" />
         }
       </LinkWrapper>
-      { (cardArray[0][i].tcgplayer_id) ? [
+      { (response.data[i].tcgplayer_id) ? [
         <>
-          { cardArray[0][i].prices.usd &&
+          { response.data[i].prices.usd &&
             <a
             className="multiCard"
             target="_blank"
             rel="noopener noreferrer"
-            href={`https://shop.tcgplayer.com/product/productsearch?id=${cardArray[0][i].tcgplayer_id}&utm_campaign=affiliate&utm_medium=MTGInvestorsGrail&utm_source=MTGInvestorsGrail`}
+            href={`https://shop.tcgplayer.com/product/productsearch?id=${response.data[i].tcgplayer_id}&utm_campaign=affiliate&utm_medium=MTGInvestorsGrail&utm_source=MTGInvestorsGrail`}
             ><strong>
               Buy non-foil:&nbsp;
               <span style={{ color: "#00623B"}} >
-                ${ cardArray[0][i].prices.usd } USD
+                ${ response.data[i].prices.usd } USD
               </span>
             </strong></a>
-          } 
-          { cardArray[0][i].prices.usd_foil &&
+          }
+          { response.data[i].prices.usd_foil &&
             <a
             className="multiCard"
             target="_blank"
             rel="noopener noreferrer"
-            href={`https://shop.tcgplayer.com/product/productsearch?id=${cardArray[0][i].tcgplayer_id}&utm_campaign=affiliate&utm_medium=MTGInvestorsGrail&utm_source=MTGInvestorsGrail`}
+            href={`https://shop.tcgplayer.com/product/productsearch?id=${response.data[i].tcgplayer_id}&utm_campaign=affiliate&utm_medium=MTGInvestorsGrail&utm_source=MTGInvestorsGrail`}
             ><strong>
               Buy foil:&nbsp;
               <span style={{ color: "#00623B"}} >
-                ${ cardArray[0][i].prices.usd_foil } USD
+                ${ response.data[i].prices.usd_foil } USD
               </span>
             </strong></a>
+          }
+          { !response.data[i].prices.usd && !response.data[i].prices.usd_foil &&
+            <p className="multiCard">
+              Purchase not available
+            </p>
           }
         </>
         ] : 
@@ -169,7 +144,7 @@ function MultiSearch(props) {
           <SearchBar />
           <InfoFlex>
             <p>
-              Showing results for: <b>{ props.q }</b>
+              Showing results for: <b>{ query.q }</b>
             </p>
             { props.cards.has_more ? 
                 <p>
@@ -185,23 +160,7 @@ function MultiSearch(props) {
             <ButtonsFlex>
               Helo
             </ButtonsFlex>
-            <PaginationFlex>
-              <InfoButton to={ props.cards.next_page }>
-                &lt;&lt;
-              </InfoButton>
-              <InfoButton to={ props.cards.next_page }>
-                &lt;
-              </InfoButton>
-              <p>
-                &nbsp;{ props.page }&nbsp;
-              </p>
-              <InfoButton to={ props.cards.next_page }>
-                &gt;
-              </InfoButton>
-              <InfoButton to={ props.cards.next_page }>
-                &gt;&gt;
-              </InfoButton>
-            </PaginationFlex>
+            <Pagination totalCards={ props.cards.total_cards } query={ query[0] } />
           </InfoFlex>
           
         </Info>
@@ -209,6 +168,32 @@ function MultiSearch(props) {
         { multiSearchItem }
       </div>
     </Wrapper>
+  );
+}
+
+function Pagination(props) {
+  const maxPage = Math.ceil(props.totalCards / 175);
+
+  return(
+    <PaginationFlex>
+      <InfoButton
+      to={ `/search?q=${props.query.q}&page=${1}` }>
+        &lt;&lt;
+      </InfoButton>
+      <InfoButton
+      to={ `/search?q=${props.query.q}&page=${ Math.max(props.query.page - 1, 1) }` }>
+        &lt;
+      </InfoButton>
+      <p>
+        &nbsp;{ props.query.page }&nbsp;
+      </p>
+      <InfoButton to={ `/search?q=${props.query.q}&page=${ Math.min(props.query.page + 1, maxPage) }` }>
+        &gt;
+      </InfoButton>
+      <InfoButton to={ `/search?q=${props.query.q}&page=${ maxPage }` }>
+        &gt;&gt;
+      </InfoButton>
+    </PaginationFlex>
   );
 }
 
@@ -272,9 +257,11 @@ const Info = styled.div`
 `;
 
 MultiSearch.propTypes = {
-  cards: PropTypes.object.isRequired,
-  q: PropTypes.string.isRequired,
-  page: PropTypes.number.isRequired
+  query: PropTypes.object.isRequired
+}
+
+Pagination.propTypes = {
+  query: PropTypes.object.isRequired
 }
 
 export { Search as default };

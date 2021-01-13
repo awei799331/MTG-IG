@@ -1,21 +1,36 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
+import { useSelector } from 'react-redux';
 import '../css/App.css';
 import '../css/home.css';
 import SearchIcon from '../img/search.svg';
+import { updateQuery, selectUnique } from '../actions/index';
+import { useDispatch } from 'react-redux';
 
 function HomeSearch() {
-  const [cardQuery, setCardQuery] = useState('');
+  const searchQuery = useSelector(state => state.search.query);
+  const searchUnique = useSelector(state => state.search.unique);
+  const dispatch = useDispatch();
 
   return(
-    <Form action="/search">
+    <Form
+    action="/search">
       <InputText
       autoComplete="off"
-      value={ cardQuery }
+      value={ searchQuery }
       type="text"
       name="q"
-      onChange={ e => setCardQuery(e.target.value) }
+      onChange={ e => dispatch(updateQuery(e.target.value)) }
       />
+      <select
+      name='unique'
+      value={ searchUnique }
+      onChange={ e => dispatch(selectUnique(e.target.value)) }
+      >
+        <option value='cards'>Cards</option>
+        <option value='art'>Artworks</option>
+        <option value='prints'>All Printings</option>
+      </select>
     </Form>
   );
 }
@@ -56,18 +71,31 @@ const InputText = styled.input`
 `;
 
 function SearchBar() {
-  const [cardQuery, setCardQuery] = useState('');
+  const searchQuery = useSelector(state => state.query);
+  const searchUnique = useSelector(state => state.unique);
+  const dispatch = useDispatch();
 
   return(
-    <Form2 action="/search">
+    <Form2
+    onSubmit={ e => e.preventDefault() }
+    action="/search">
       <InputText2
       autoComplete="off"
-      value={ cardQuery }
+      value={ searchQuery }
       type="text"
       name="q"
       placeholder="Search for a card"
-      onChange={ e => setCardQuery(e.target.value) }
+      onChange={ e => dispatch(updateQuery(e.target.value)) }
       />
+      <select
+      name='unique'
+      value={ searchUnique }
+      onChange={ e => dispatch(selectUnique(e.target.value)) }
+      >
+        <option value='cards'>Cards</option>
+        <option value='art'>Artworks</option>
+        <option value='prints'>All Printings</option>
+      </select>
     </Form2>
   );
 }
