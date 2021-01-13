@@ -1,5 +1,6 @@
+/* eslint-disable react/jsx-tag-spacing */
 import React, { useState, useEffect } from 'react';
-import { Redirect, useParams, BrowserRouter as Route, Link } from 'react-router-dom'; // eslint-disable-line
+import { Redirect, useParams, BrowserRouter as Link } from 'react-router-dom';
 import axios from 'axios';
 import styled from 'styled-components';
 import PuffLoader from "react-spinners/PuffLoader";
@@ -9,9 +10,10 @@ import NavBar from './navbar';
 import Footer from './footer';
 import BG from './background';
 import { fixedEncodeURIComponent } from '../utils/utils';
+import { SearchBar } from './searchBar';
 
 function Card() {
-  let { id } = useParams();
+  const { id } = useParams();
   const [redir, setRedir] = useState(false);
   const [cardSide, setCardSide] = useState(0);
   const [response, setResponse] = useState({});
@@ -24,10 +26,9 @@ function Card() {
         params: {
           format: 'json'
         }
-        })
+      })
         .then(res => {
           setResponse(res.data);
-          console.log(res.data);
           return res.data;
         })
         .then(res => {
@@ -37,9 +38,8 @@ function Card() {
             setRenderType('none');
           }
         })
-        .catch(e => {
+        .catch(() => {
           setRenderType('none');
-          console.log(e);
         });
     }
   }, [id]);
@@ -51,160 +51,190 @@ function Card() {
   return(
     <>
       <div className="wrapper">
-      <BG />
-        <div className="content">
-          <NavBar />
+        <BG />
+          <div className="content">
+            <NavBar />
 
-          { redir ?
-            <Redirect to='/' /> :
-            
-            renderType === 'loading' ?
-            <div className="load">
-              <div style={{ marginTop: '150px' }}>
-                <PuffLoader
-                size={150}
-                color="#005E3A"
-                />
-                <h2 style={{ color:'#005E3A', textAlign: 'center' }} >Fetching data</h2>
+            { redir ?
+              <Redirect to="/" /> :
+              renderType === 'loading' ? (
+              <div className="load">
+                <div style={{ marginTop: '150px' }}>
+                  <PuffLoader
+                    size={150}
+                    color="#005E3A"
+                  />
+                  <h2 style={{ color: '#005E3A', textAlign: 'center' }} >Fetching data</h2>
+                </div>
               </div>
-            </div> :
+              ) :
 
-            renderType === 'single' ?
-            <div className="singleCard">
-              { response.image_uris ?
-              <ImageWrapper>
-                <FlipImg alt="card" src={ response.image_uris.normal } />
-              </ImageWrapper> :
+                renderType === 'single' ? (
+              <div className="singleWrapper">
+                <Info>
+                  <SearchBar />
+                </Info>
+                <div className="singleCard">
+                  { response.image_uris ? (
+                  <ImageWrapper>
+                    <FlipImg alt="card" src={response.image_uris.normal} />
+                  </ImageWrapper>
+                  ) : (
+                  <ImageWrapper>
+                    <FlipImg alt="card" src={response.card_faces[cardSide].image_uris.normal} />
+                    <ButtonWrapper>
+                      <FlipButton onClick={flipCard}>
+                        <p>Flip</p>
+                      </FlipButton>
+                    </ButtonWrapper>
+                  </ImageWrapper>
+                  )}
 
-              <ImageWrapper>
-                <FlipImg alt="card" src={ response.card_faces[cardSide].image_uris.normal } />
-                <ButtonWrapper>
-                  <FlipButton onClick={ flipCard }>
-                    <p>Flip</p>
-                  </FlipButton>
-                </ButtonWrapper>
-              </ImageWrapper>
-              }
+                  { !response.card_faces ? (
+                    <>
+                      <div className="cardData">
+                        <CardName>
+                          { response.name }
+                        </CardName>
+                        <CardType>
+                          { response.type_line }
+                        </CardType>
+                        { response.oracle_text.split('\n').map((str) => <CardDesc>{ str }</CardDesc>) }
+                        <CardFlavor>
+                          { response.flavor_text }
+                        </CardFlavor>
+                        { (response.power && response.toughness) && (
+                          <PT>
+                            <b>Power / Toughness:&nbsp;</b>
+                            <span>{ response.power }</span>
+                            &nbsp;/&nbsp;
+                            <span>{ response.toughness }</span>
+                          </PT>
+                        )}
+                      </div>
+                    </>
+                  ) :
 
-              { !response.card_faces ?
-                <>
-                  <div className="cardData">
-                    <CardName>
-                      { response.name }
-                    </CardName>
-                    <CardType>
-                      { response.type_line }
-                    </CardType>
-                    { response.oracle_text.split('\n').map((str, index) => {
-                      return <CardDesc key={index}>{ str }</CardDesc>;
-                    }) }
-                    <CardFlavor>
-                      { response.flavor_text }
-                    </CardFlavor>
-                    { (response.power && response.toughness) &&
-                      <PT>
-                        <b>Power / Toughness:&nbsp;</b>
-                        <span>{ response.power }</span>&nbsp;/&nbsp;
-                        <span>{ response.toughness }</span>
-                      </PT>
-                    }
+                    response.card_faces ? (
+                    <>
+                      <div className="cardData">
+                        <CardName>
+                          { response.card_faces[cardSide].name }
+                        </CardName>
+                        <CardType>
+                          { response.card_faces[cardSide].type_line }
+                        </CardType>
+                        { response.card_faces[cardSide].oracle_text.split('\n').map(str => <CardDesc>{ str }</CardDesc>) }
+                        <CardFlavor>
+                          { response.card_faces[cardSide].flavor_text }
+                        </CardFlavor>
+                        { (response.card_faces[cardSide].power && response.card_faces[cardSide].toughness) && (
+                          <PT>
+                            <b>Power / Toughness:&nbsp;</b>
+                            <span>{ response.card_faces[cardSide].power }</span>
+                            &nbsp;/&nbsp;
+                            <span>{ response.card_faces[cardSide].toughness }</span>
+                          </PT>
+                        )}
+                      </div>
+                    </>
+                    ) : <div />
+                  }
+                  <UtilityWrapper>
+                    <PricesWrapper>
+                      <PricesHeader>Purchase on TCGPlayer</PricesHeader>
+                        { response.prices.usd !== null ? (
+                          <PriceText>
+                            ${response.prices.usd}&nbsp;USD
+                          </PriceText>
+                        ) :
+                          response.prices.usd_foil !== null ? (
+                          <PriceText>
+                            ${response.prices.usd_foil}&nbsp;USD
+                          </PriceText>
+                          ) :
+                          <PriceText>Price not available</PriceText>}
+                        <PriceButtonWrapper>
+                        { response.prices.usd !== null && (
+                          <a
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            href={`https://shop.tcgplayer.com/product/productsearch?id=${response.tcgplayer_id}&utm_campaign=affiliate&utm_medium=MTGInvestorsGrail&utm_source=MTGInvestorsGrail`}
+                          >
+                            <PricesButton><p>Buy</p></PricesButton>
+                          </a>
+                        )}
+                        { response.prices.usd_foil !== null && (
+                          <a
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            href={`https://shop.tcgplayer.com/product/productsearch?id=${response.tcgplayer_id}&utm_campaign=affiliate&utm_medium=MTGInvestorsGrail&utm_source=MTGInvestorsGrail`}
+                          >
+                            <PricesButton><p>Buy Foil</p></PricesButton>
+                          </a>
+                        )}
+                        </PriceButtonWrapper>
+                    </PricesWrapper>
+                    <Utility>
+                      <PricesHeader>
+                        Helpful Links
+                      </PricesHeader>
+                      <UtilityText to={`/search?q=oracle_id%3A${ fixedEncodeURIComponent(response.oracle_id) }&unique=prints&redirected=true`}>
+                        View all printings of this card
+                      </UtilityText>
+                      <UtilityText to={`/search?q=set%3A${ fixedEncodeURIComponent(response.set) }&unique=prints&redirected=true`}>
+                        View all cards in set
+                      </UtilityText>
+                      <UtilityText to={`/search?q=oracle_id%3A${ fixedEncodeURIComponent(response.oracle_id) }+lang%3Aany&unique=prints&redirected=true`}>
+                        View all languages
+                      </UtilityText>
+                      <UtilityText to={`/search?q=oracle_id%3A${ fixedEncodeURIComponent(response.oracle_id) }+lang%3Aany&unique=prints&redirected=true`}>
+                        Report a problem (Currently not working)
+                      </UtilityText>
+                    </Utility>
+                  </UtilityWrapper>
+                  <div className="graph">
+                    Graphs under construction
                   </div>
-                </> :
-
-                response.card_faces ?
-                <>
-                  <div className="cardData">
-                    <CardName>
-                      { response.card_faces[cardSide].name }
-                    </CardName>
-                    <CardType>
-                      { response.card_faces[cardSide].type_line }
-                    </CardType>
-                    { response.card_faces[cardSide].oracle_text.split('\n').map((str, index) => {
-                      return <CardDesc key={index}>{ str }</CardDesc>;
-                    }) }
-                    <CardFlavor>
-                      { response.card_faces[cardSide].flavor_text }
-                    </CardFlavor>
-                    { (response.card_faces[cardSide].power && response.card_faces[cardSide].toughness) &&
-                      <PT>
-                        <b>Power / Toughness:&nbsp;</b>
-                        <span>{ response.card_faces[cardSide].power }</span>&nbsp;/&nbsp;
-                        <span>{ response.card_faces[cardSide].toughness }</span>
-                      </PT>
-                    }
-                  </div>
-                </> : <div />
-              }
-              <UtilityWrapper>
-                <PricesWrapper>
-                  <PricesHeader>Purchase on TCGPlayer</PricesHeader>
-                    { response.prices.usd !== null ?
-                      <PriceText>${response.prices.usd} USD</PriceText> :
-                      response.prices.usd_foil !== null ?
-                      <PriceText>${response.prices.usd_foil} USD</PriceText> :
-                      <PriceText>Price not available</PriceText>
-                    }
-                    <PriceButtonWrapper>
-                    { response.prices.usd !== null &&
-                      <a
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      href={`https://shop.tcgplayer.com/product/productsearch?id=${response.tcgplayer_id}&utm_campaign=affiliate&utm_medium=MTGInvestorsGrail&utm_source=MTGInvestorsGrail`}>
-                        <PricesButton><p>Buy</p></PricesButton>
-                      </a>
-                    }
-                    { response.prices.usd_foil !== null &&
-                      <a
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      href={`https://shop.tcgplayer.com/product/productsearch?id=${response.tcgplayer_id}&utm_campaign=affiliate&utm_medium=MTGInvestorsGrail&utm_source=MTGInvestorsGrail`}>
-                        <PricesButton><p>Buy Foil</p></PricesButton>
-                      </a>
-                    }
-                  </PriceButtonWrapper>
-                </PricesWrapper>
-                <Utility>
-                  <PricesHeader>
-                    Helpful Links
-                  </PricesHeader>
-                  <UtilityText to={`/search?q=oracle_id%3A${ fixedEncodeURIComponent(response.oracle_id) }&unique=prints`}>
-                    View all printings of this card
-                  </UtilityText>
-                  <UtilityText to={`/search?q=set%3A${ fixedEncodeURIComponent(response.set) }&unique=prints`}>
-                    View all cards in set
-                  </UtilityText>
-                  <UtilityText to={`/search?q=oracle_id%3A${ fixedEncodeURIComponent(response.oracle_id) }+lang%3Aany&unique=prints`}>
-                    View all languages
-                  </UtilityText>
-                </Utility>
-              </UtilityWrapper>
-              <div className="graph">
-                Graphs under construction
+                </div>
               </div>
-            </div> :
+                ) :
 
-            renderType === 'none' ?
-            <div className="singleCard">
-              No card data found
-            </div> :
+                  renderType === 'none' ? (
+              <div className="singleCard">
+                No card data found
+              </div>
+                  ) :
 
-            <div />
-          }
-
-        </div>
-        <Footer />
+              <div />}
+          </div>
+          <Footer />
       </div>
     </>
   );
 }
+
+const Info = styled.div`
+  width: 56.25%;
+  margin: 0 21.875%;
+  padding-top: 50px;
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: flex-start:
+  justify-content: flex-start;
+
+  @media (max-width: 767px) {
+    width: 75%;
+    margin: 0 12.5%;
+  }
+`;
 
 const ImageWrapper = styled.div`
   display: flex;
   flex-flow: column nowrap;
   align-items: center;
   justify-content: flex-start;
-  margin: 0 25px 25px;
+  margin: 0 0 25px 0;
 `;
 
 const FlipImg = styled.img`
@@ -333,7 +363,7 @@ const UtilityWrapper = styled.div`
   display: flex;
   flex-flow: column nowrap;
   justify-content: flex-start;
-  margin: 0 25px 25px;
+  margin: 0 0 25px 0;
   width: 100%;
   max-width: 366px;
 `;
@@ -374,7 +404,7 @@ const PricesButton = styled.div`
     height: 100%;
     background-color: #00c474;
     position: absolute;
-    transition: all 0.5s ease;
+    transition: all 0.35s ease;
     top: 0;
     left: -100%;
     z-index: 0;
@@ -390,7 +420,6 @@ const PricesButton = styled.div`
     color: #fff;
     z-index: 1;
     position: relative;
-    transition: all 0.5s ease;
   }
 
   &:hover:before {

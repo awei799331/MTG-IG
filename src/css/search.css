@@ -11,13 +11,10 @@
 }
 
 .multiSearch {
-  background-color: #f2f2fd;
   display: flex;
   flex-flow: row wrap;
   justify-content: center;
   align-items: center;
-  width: 75%;
-  padding: 50px 0;
   margin: 0 auto;
 }
 
@@ -56,14 +53,18 @@
   width: auto;
 }
 
-.singleCard {
+.singleWrapper {
   background-color: #f2f2fd;
+  width: 100%;
+  min-height: calc(100vh - 50px);
+}
+
+.singleCard {
   display: flex;
   flex-flow: row wrap;
   justify-content: center;
   align-items: flex-start;
-  width: 90%;
-  padding: 50px 5%;
+  width: 75%;
   margin: 0 auto;
 }
 
@@ -82,7 +83,7 @@
   background-color: #f6f6ff;
   border: 1px solid #d6d6d6;
   border-top: none;
-  margin: 0 0 25px;
+  margin: 0 25px 25px;
   width: 100%;
   max-width: 400px;
 }
@@ -105,8 +106,7 @@
     padding: 0 5%;
   }
 
-  .singleCard {
-    width: 80%;
-    padding: 50px 10%;
+  .cardData {
+    margin: 0 0 25px 0;
   }
 }

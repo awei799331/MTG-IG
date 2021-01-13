@@ -1,57 +1,42 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Redirect, Link } from 'react-router-dom'; // eslint-disable-line
-import axios from 'axios';
 import queryString from 'query-string';
 import PuffLoader from "react-spinners/PuffLoader";
-import { animated, useTrail } from 'react-spring';
+import { animated } from 'react-spring';
 import styled from 'styled-components';
-
+import PropTypes from 'prop-types';
 import '../css/App.css';
 import '../css/search.css';
 import NavBar from './navbar';
 import Footer from './footer';
 import BG from './background';
 import { fixedEncodeURIComponent, decodeQueryParam } from '../utils/utils';
+import { SearchBar } from './searchBar';
+import { useSelector, useDispatch } from 'react-redux';
+import { requestScryfall } from '../actions/index';
 
 function Search(props) {
-  const [redir, setRedir] = useState(false);
-  const [response, setResponse] = useState({});
-  const [renderType, setRenderType] = useState('loading');
-  useEffect(() => {
-    const query = queryString.parse(props.location.search);
-    for (let prop in query) {
-      query[prop] = decodeQueryParam(query[prop]);
+  const status = useSelector(state => state.responses.status);
+  const errorMessage = useSelector(state => state.responses.errorMessage);
+  const response = useSelector(state => state.responses.response);
+  const dispatch = useDispatch();
+
+  const query = useMemo(() => {
+    const queryTemp = queryString.parse(props.location.search);
+    for (let prop in queryTemp) {
+      queryTemp[prop] = decodeQueryParam(queryTemp[prop]);
     }
-    if (query.q.trim() === '') {
-      setRedir(true);
-    } else {
-      axios.get('https://api.scryfall.com/cards/search', {
-        params: {
-          order: 'name',
-          unique: query.unique ? query.unique: 'card',
-          q: query.q ? query.q : '',
-          page: query.q ? query.q : 1
-        }
-        })
-        .then(res => {
-          setResponse(res.data);
-          return res.data;
-        })
-        .then(res => {
-          if (res.object === 'list' && res.data.length > 1) {
-            setRenderType('multi');
-          } else if (res.object === 'list' && res.data.length === 1) {
-            setRenderType('single');
-          } else {
-            setRenderType('none');
-          }
-        })
-        .catch(e => {
-          setRenderType('none');
-          console.log(e);
-        });
-    }
+    return {
+      q: queryTemp.q,
+      page: queryTemp.page ? parseInt(queryTemp.page) : 1,
+      unique: queryTemp.unique ? queryTemp.unique: 'card'
+    };
+    
   }, [props.location.search]);
+
+  useEffect(() => {
+    dispatch(requestScryfall(query.q, query.unique, query.page));
+  }, [query]);
 
   return(
     <>
@@ -59,11 +44,7 @@ function Search(props) {
       <BG />
         <div className="content">
           <NavBar />
-
-          { redir ?
-            <Redirect to='/' /> :
-            
-            renderType === 'loading' ?
+          { status === 'loading' ?
             <div className="load">
               <div style={{ marginTop: '150px' }}>
                 <PuffLoader
@@ -74,20 +55,24 @@ function Search(props) {
               </div>
             </div> :
 
-            renderType === 'multi' ?
-            <MultiSearch data={ response } /> :
+            status === 'multi' ?
+            <MultiSearch cards={ response } query={ query } /> :
 
-            renderType === 'single' ?
+            status === 'single' ?
             <Redirect to={`/card/${ fixedEncodeURIComponent(response.data[0].id) }`} /> :
             
-            renderType === 'none' ?
+            status === 'error' ?
             <div className="load">
-              Error
+              {{ errorMessage }}
+            </div> :
+
+            status === 'none' ?
+            <div className="load">
+              None
             </div> :
 
             <div />
           }
-
         </div>
         <Footer />
       </div>
@@ -96,53 +81,53 @@ function Search(props) {
 }
 
 function MultiSearch(props) {
-  const cardArray = useState(props.data.data);
+  const query = useState(props.query);
+  const response = useSelector(state => state.responses.response);
 
-  const trail = useTrail(cardArray[0].length, {
-    config: { tension: 2000, friction: 150, delay: 100 },
-    from: { opacity: 0 },
-    to: { opacity: 1 },
-  })
+  const multiSearchItem = response.data.map((card, i) => 
+    <animated.div style={ card } className="multiCardItem" key={ response.data[i].id } >
+      <LinkWrapper to={`/card/${ fixedEncodeURIComponent(response.data[i].id) }`} >
+        { response.data[i].image_uris ?
+          <img alt="" className="multiCardImg" src={ response.data[i].image_uris.normal } /> :
 
-  const multiSearchItem = trail.map((card, i) => 
-    <animated.div style={ card } className="multiCardItem" key={ cardArray[0][i].id } >
-      <LinkWrapper to={`/card/${ fixedEncodeURIComponent(cardArray[0][i].id) }`} >
-        { cardArray[0][i].image_uris ?
-          <img alt="" className="multiCardImg" src={ cardArray[0][i].image_uris.normal } /> :
-
-          cardArray[0][i].card_faces ?
-          <img alt="" className="multiCardImg" src={ cardArray[0][i].card_faces[0].image_uris.normal } /> :
+          response.data[i].card_faces ?
+          <img alt="" className="multiCardImg" src={ response.data[i].card_faces[0].image_uris.normal } /> :
 
           <img alt="" className="multiCardImg" />
         }
       </LinkWrapper>
-      { (cardArray[0][i].tcgplayer_id) ? [
+      { (response.data[i].tcgplayer_id) ? [
         <>
-          { cardArray[0][i].prices.usd &&
+          { response.data[i].prices.usd &&
             <a
             className="multiCard"
             target="_blank"
             rel="noopener noreferrer"
-            href={`https://shop.tcgplayer.com/product/productsearch?id=${cardArray[0][i].tcgplayer_id}&utm_campaign=affiliate&utm_medium=MTGInvestorsGrail&utm_source=MTGInvestorsGrail`}
+            href={`https://shop.tcgplayer.com/product/productsearch?id=${response.data[i].tcgplayer_id}&utm_campaign=affiliate&utm_medium=MTGInvestorsGrail&utm_source=MTGInvestorsGrail`}
             ><strong>
               Buy non-foil:&nbsp;
               <span style={{ color: "#00623B"}} >
-                ${ cardArray[0][i].prices.usd } USD
+                ${ response.data[i].prices.usd } USD
               </span>
             </strong></a>
-          } 
-          { cardArray[0][i].prices.usd_foil &&
+          }
+          { response.data[i].prices.usd_foil &&
             <a
             className="multiCard"
             target="_blank"
             rel="noopener noreferrer"
-            href={`https://shop.tcgplayer.com/product/productsearch?id=${cardArray[0][i].tcgplayer_id}&utm_campaign=affiliate&utm_medium=MTGInvestorsGrail&utm_source=MTGInvestorsGrail`}
+            href={`https://shop.tcgplayer.com/product/productsearch?id=${response.data[i].tcgplayer_id}&utm_campaign=affiliate&utm_medium=MTGInvestorsGrail&utm_source=MTGInvestorsGrail`}
             ><strong>
               Buy foil:&nbsp;
               <span style={{ color: "#00623B"}} >
-                ${ cardArray[0][i].prices.usd_foil } USD
+                ${ response.data[i].prices.usd_foil } USD
               </span>
             </strong></a>
+          }
+          { !response.data[i].prices.usd && !response.data[i].prices.usd_foil &&
+            <p className="multiCard">
+              Purchase not available
+            </p>
           }
         </>
         ] : 
@@ -154,15 +139,129 @@ function MultiSearch(props) {
   );
 
   return(
-    <div className="multiSearch">
-      { multiSearchItem }
-    </div>
+    <Wrapper>
+      <Info>
+          <SearchBar />
+          <InfoFlex>
+            <p>
+              Showing results for: <b>{ query.q }</b>
+            </p>
+            { props.cards.has_more ? 
+                <p>
+                  - of { props.cards.total_cards }
+                </p> :
+                <p>
+                  -{ props.cards.total_cards } of { props.cards.total_cards }
+                </p>
+            }
+            
+          </InfoFlex>
+          <InfoFlex>
+            <ButtonsFlex>
+              Helo
+            </ButtonsFlex>
+            <Pagination totalCards={ props.cards.total_cards } query={ query[0] } />
+          </InfoFlex>
+          
+        </Info>
+      <div className="multiSearch">
+        { multiSearchItem }
+      </div>
+    </Wrapper>
   );
 }
+
+function Pagination(props) {
+  const maxPage = Math.ceil(props.totalCards / 175);
+
+  return(
+    <PaginationFlex>
+      <InfoButton
+      to={ `/search?q=${props.query.q}&page=${1}` }>
+        &lt;&lt;
+      </InfoButton>
+      <InfoButton
+      to={ `/search?q=${props.query.q}&page=${ Math.max(props.query.page - 1, 1) }` }>
+        &lt;
+      </InfoButton>
+      <p>
+        &nbsp;{ props.query.page }&nbsp;
+      </p>
+      <InfoButton to={ `/search?q=${props.query.q}&page=${ Math.min(props.query.page + 1, maxPage) }` }>
+        &gt;
+      </InfoButton>
+      <InfoButton to={ `/search?q=${props.query.q}&page=${ maxPage }` }>
+        &gt;&gt;
+      </InfoButton>
+    </PaginationFlex>
+  );
+}
+
+const Wrapper = styled.div`
+  background-color: #f2f2fd;
+  width: 75%;
+  padding-top: 50px;
+  margin: 0 12.5%;
+  min-height: calc(100vh - 250px);
+
+  @media (max-width: 767px) {
+    width: 100%;
+    margin: 0;
+  }
+`;
 
 const LinkWrapper = styled(Link)`
   margin: 10px auto;
   height: 340px;
 `;
+
+const InfoFlex = styled.div`
+  width: 100%;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-between;
+`;
+
+const ButtonsFlex = styled.div`
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-start;
+  align-items: center;
+`;
+
+const PaginationFlex = styled.div`
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-end;
+  align-items: center;
+`;
+
+const InfoButton = styled(Link)`
+  color: #222222;
+  text-decoration: none;
+  background: none;
+  border: 1px solid #222222;
+  border-radius: 2px;
+  padding: 0 12px;
+  margin: 0 3px;
+  line-height: 18px;
+`;
+
+const Info = styled.div`
+  width: 75%;
+  margin: 0 12.5%;
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: flex-start:
+  justify-content: flex-start;
+`;
+
+MultiSearch.propTypes = {
+  query: PropTypes.object.isRequired
+}
+
+Pagination.propTypes = {
+  query: PropTypes.object.isRequired
+}
 
 export { Search as default };

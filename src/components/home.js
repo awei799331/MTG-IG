@@ -1,7 +1,7 @@
 import React from 'react';
 import '../css/App.css';
 import '../css/home.css';
-import HomeSearch from './searchBar';
+import { HomeSearch } from './searchBar';
 import NavBar from './navbar';
 import Footer from './footer';
 import BG from './background';
@@ -14,13 +14,13 @@ function Home() {
         <NavBar />
         <div className="flex">
           <h1 className="title">
-              <strong>MTG Investor's Grail</strong>{' '}
-              is the first{' '}
-              <strong>deep learning</strong>{' '}
-              based
+              <b>MTG Investor's Grail</b>
+              &nbsp;is the first&nbsp;
+              <b>deep learning</b>
+              &nbsp;based
               <br />
-              <strong>Magic: The Gathering</strong>{' '}
-              card price predictor
+              <b>Magic: The Gathering</b>
+              &nbsp;card price predictor
           </h1>
           <HomeSearch />
         </div>

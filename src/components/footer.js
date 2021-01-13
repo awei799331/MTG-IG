@@ -4,12 +4,13 @@ import '../css/App.css';
 function Footer() {
   return(
     <footer className="footer">
-      <p className="footertext">Parts of MTG Investor's Grail are unofficial fan content permitted under the Wizards of the Coast Fan Content Policy. 
+      <p className="footertext">
+        Parts of MTG Investor's Grail are unofficial fan content permitted under the Wizards of the Coast Fan Content Policy.
           <br />
           The literal and graphical content shown on this website about Magic: The Gathering, including card images, oracle text, etc. is
-          copyright Wizards of the Coast, LLC, a subsidiary of Hasbro, Inc. 
+          copyright Wizards of the Coast, LLC, a subsidiary of Hasbro, Inc.
           <br />
-          MTG Investor's Grail is not sponsored by, endorsed by, or affiliated with 
+          MTG Investor's Grail is not sponsored by, endorsed by, or affiliated with
           Wizards of the Coast.
       </p>
       <p className="footertext">
