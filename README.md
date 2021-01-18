@@ -1,5 +1,6 @@
 # Our application is currently under development!
 ### [Please check it out here!](https://mtginvest-dev.herokuapp.com)
+Some of the styling may be off because I haven't gotten to it yet :(
 
 # For our latest work, please view the 'dev' branch, not the master branch. Thanks!
 
