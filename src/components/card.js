@@ -1,6 +1,5 @@
-/* eslint-disable react/jsx-tag-spacing */
 import React, { useState, useEffect } from 'react';
-import { Redirect, useParams, BrowserRouter as Link } from 'react-router-dom';
+import { Redirect, useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 import styled from 'styled-components';
 import PuffLoader from "react-spinners/PuffLoader";

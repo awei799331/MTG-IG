@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, Link } from 'react-router-dom';
 import { useSpring, animated, config } from "react-spring";
 import styled from 'styled-components';
 import '../css/App.css';
+import Logo256 from '../img/logo_256.png';
 
 function NavBar() {
   const [navbarOpen, setNavbarOpen] = useState(false);
@@ -53,9 +54,14 @@ function NavBar() {
 
 function Logo() {
   return(
-    <div className="navtext">
-      <a href="/">MTG Investor's Grail</a>
-    </div>
+    <Link to="/">
+      <div style={{ display: 'flex', flexFlow: 'row nowrap', alignItems: 'center', paddingLeft: '10px' }}>
+        <LogoImg alt="logo" src={ Logo256 } />
+        <div className="navtext navtext-logo">
+          <a href="/">MTG Investor's Grail</a>
+        </div>
+      </div>
+    </Link>
   );
 }
 
@@ -87,6 +93,11 @@ function Burger(props) {
     </BurgerWrapper>
   );
 }
+
+const LogoImg = styled.img`
+  width: 32px;
+  height: 32px;
+`;
 
 const Nav = styled(animated.div)`
   font-size: 14px;

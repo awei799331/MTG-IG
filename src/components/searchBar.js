@@ -15,14 +15,14 @@ function HomeSearch() {
   return(
     <Form
     action="/search">
-      <InputText
+      <HomeInputText
       autoComplete="off"
       value={ searchQuery }
       type="text"
       name="q"
       onChange={ e => dispatch(updateQuery(e.target.value)) }
       />
-      <select
+      <HomeSelect
       name='unique'
       value={ searchUnique }
       onChange={ e => dispatch(selectUnique(e.target.value)) }
@@ -30,7 +30,7 @@ function HomeSearch() {
         <option value='cards'>Cards</option>
         <option value='art'>Artworks</option>
         <option value='prints'>All Printings</option>
-      </select>
+      </HomeSelect>
     </Form>
   );
 }
@@ -39,7 +39,7 @@ const Form = styled.form`
   width: 100%;
 `;
 
-const InputText = styled.input`
+const HomeInputText = styled.input`
   width: 100%;
   max-width: 720px;
   height: 50px;
@@ -55,7 +55,7 @@ const InputText = styled.input`
   border-color: rgba(255,255,255,0.3);
   border-width: 3px;
   border-style: solid;
-  margin: 2% auto 5%;
+  margin: 2% auto 1%;
   outline: none;
   transition: all 500ms linear 0s;
 
@@ -70,6 +70,25 @@ const InputText = styled.input`
   }
 `;
 
+const HomeSelect = styled.select`
+  font-size: 14px;
+  font-family: Open Sans, sans-serif;
+  color: white;
+  padding: auto 1px;
+  display: block;
+  background-color: rgba(255,255,255,0.3);
+  border-color: rgba(255,255,255,0.3);
+  border-width: 2px;
+  border-style: solid;
+  margin: 2px auto;
+  outline: none;
+  transition: all 500ms linear 0s;
+
+  & > option {
+    background-color: #666;
+  }
+`;
+
 function SearchBar() {
   const searchQuery = useSelector(state => state.query);
   const searchUnique = useSelector(state => state.unique);
@@ -77,7 +96,6 @@ function SearchBar() {
 
   return(
     <Form2
-    onSubmit={ e => e.preventDefault() }
     action="/search">
       <InputText2
       autoComplete="off"

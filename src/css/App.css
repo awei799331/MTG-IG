@@ -48,6 +48,8 @@ p, a, span, button {
   user-select: none;
   padding: 1rem 0;
   text-align: justify;
+  font-weight: bold;
+  text-transform: uppercase;
   transition: all 250ms linear 0s;
   color: #aaaaaa;
 }
@@ -61,8 +63,6 @@ p, a, span, button {
   padding: 1rem 1rem;
   text-decoration: none;
   color: inherit;
-  text-transform: uppercase;
-  font-weight: bold;
   cursor: pointer;
 }
 
@@ -78,7 +78,7 @@ p, a, span, button {
   transition: all 0.35s ease;
 }
 
-.navtext :hover::before {
+.navtext:hover ::before {
   transition: all 0.5s ease;
   width: 100%;
   left: 0;
