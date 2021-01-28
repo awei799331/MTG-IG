@@ -2,6 +2,7 @@
 ### [Please check it out here!](https://mtginvest-dev.herokuapp.com)
 
 # For our latest work, please view the 'dev' branch, not the master branch. Thanks!
+To look at our progress on the model, visit this repo: [MTG-Investor-s-Grail](https://github.com/awei799331/MTG-Investor-s-Grail)
 
 ## What does this project aspire to do?
 

@@ -105,7 +105,7 @@ function SearchBar() {
       placeholder="Search for a card"
       onChange={ e => dispatch(updateQuery(e.target.value)) }
       />
-      <select
+      <SearchSelect
       name='unique'
       value={ searchUnique }
       onChange={ e => dispatch(selectUnique(e.target.value)) }
@@ -113,7 +113,7 @@ function SearchBar() {
         <option value='cards'>Cards</option>
         <option value='art'>Artworks</option>
         <option value='prints'>All Printings</option>
-      </select>
+      </SearchSelect>
     </Form2>
   );
 }
@@ -144,6 +144,11 @@ const InputText2 = styled.input`
     font-size: 16px;
 		height: 25px;
   }
+`;
+
+const SearchSelect = styled.select`
+  background-color: #f2f2fd;
+  border: 1px solid #b3b3b3;
 `;
 
 export { HomeSearch, SearchBar };

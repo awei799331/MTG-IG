@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Redirect, Link } from 'react-router-dom'; // eslint-disable-line
+import { Redirect, Link } from 'react-router-dom';
 import queryString from 'query-string';
 import PuffLoader from "react-spinners/PuffLoader";
 import { animated } from 'react-spring';
@@ -13,7 +13,7 @@ import BG from './background';
 import { fixedEncodeURIComponent, decodeQueryParam } from '../utils/utils';
 import { SearchBar } from './searchBar';
 import { useSelector, useDispatch } from 'react-redux';
-import { requestScryfall } from '../actions/index';
+import { requestScryfall, selectUnique } from '../actions/index';
 
 function Search(props) {
   const status = useSelector(state => state.responses.status);
@@ -31,11 +31,11 @@ function Search(props) {
       page: queryTemp.page ? parseInt(queryTemp.page) : 1,
       unique: queryTemp.unique ? queryTemp.unique: 'card'
     };
-    
   }, [props.location.search]);
 
   useEffect(() => {
     dispatch(requestScryfall(query.q, query.unique, query.page));
+    dispatch(selectUnique(query.unique));
   }, [query]);
 
   return(
@@ -141,17 +141,17 @@ function MultiSearch(props) {
   return(
     <Wrapper>
       <Info>
-          <SearchBar />
+          <SearchBar query/>
           <InfoFlex>
             <p>
-              Showing results for: <b>{ query.q }</b>
+              Showing results for: <b>{ query[0].q }</b>
             </p>
             { props.cards.has_more ? 
                 <p>
-                  - of { props.cards.total_cards }
+                  { 175 * (query[0].page-1) + 1 } - { 175 * (query[0].page-1) + 175 } of { props.cards.total_cards }
                 </p> :
                 <p>
-                  -{ props.cards.total_cards } of { props.cards.total_cards }
+                  { 175 * (query[0].page-1) + 1 } - { props.cards.total_cards } of { props.cards.total_cards }
                 </p>
             }
             
