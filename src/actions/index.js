@@ -1,19 +1,5 @@
 import axios from 'axios';
 
-export const selectUnique = (option) => {
-  return {
-    type: 'SELECTUNIQUE',
-    payload: option
-  };
-}
-
-export const updateQuery = (newQuery) => {
-  return {
-    type: 'UPDATEQUERY',
-    payload: newQuery
-  };
-}
-
 export const setStatusLoading = () => {
   return {
     type: 'SETSTATUSLOADING',

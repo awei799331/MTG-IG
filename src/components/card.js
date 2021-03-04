@@ -3,6 +3,8 @@ import { Redirect, useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 import styled from 'styled-components';
 import PuffLoader from "react-spinners/PuffLoader";
+import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip } from 'recharts';
+
 import '../css/App.css';
 import '../css/search.css';
 import NavBar from './navbar';
@@ -17,6 +19,11 @@ function Card() {
   const [cardSide, setCardSide] = useState(0);
   const [response, setResponse] = useState({});
   const [renderType, setRenderType] = useState('loading');
+
+  const sampleFakeCardData = [
+    {date: "Feb 27, 2021", price: 5.00}, {date: "Feb 28, 2021", price: 6.00}, {date: "Mar 1, 2021", price: 10.00}, {date: "Mar 2, 2021", price: 3.00}
+  ];
+
   useEffect(() => {
     if (id === '') {
       setRedir(true);
@@ -193,7 +200,13 @@ function Card() {
                     </Utility>
                   </UtilityWrapper>
                   <div className="graph">
-                    Graphs under construction
+                    <LineChart width={600} height={300} data={ sampleFakeCardData } margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
+                      <Line type="monotone" dataKey="price" stroke="#8884d8" />
+                      <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
+                      <XAxis dataKey="date" />
+                      <YAxis />
+                      <Tooltip />
+                    </LineChart>
                   </div>
                 </div>
               </div>

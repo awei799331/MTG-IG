@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { NavLink, Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import { useSpring, animated, config } from "react-spring";
 import styled from 'styled-components';
 import '../css/App.css';
@@ -30,7 +30,7 @@ function NavBar() {
         <Container>
           <Logo />
           <animated.ul style={ LinkAnimation } className="navbar">
-            <li className="navtext"><NavLink to="/howItWorks">How it Works</NavLink></li>
+            <li className="navtext"><NavLink to="/how-it-works">How it Works</NavLink></li>
             <li className="navtext"><NavLink to="/about">About</NavLink></li>
             <li className="navtext"><NavLink to="/contact">Contact</NavLink></li>
             <li className="navtext"><NavLink to="/profile">Profile</NavLink></li>
@@ -54,14 +54,14 @@ function NavBar() {
 
 function Logo() {
   return(
-    <Link to="/">
-      <div style={{ display: 'flex', flexFlow: 'row nowrap', alignItems: 'center', paddingLeft: '10px' }}>
+    <div style={{ display: 'flex', flexFlow: 'row nowrap', alignItems: 'center', paddingLeft: '10px' }}>
+      <a href="/">
         <LogoImg alt="logo" src={ Logo256 } />
-        <div className="navtext navtext-logo">
-          <a href="/">MTG Investor's Grail</a>
-        </div>
+      </a>
+      <div className="navtext navtext-logo">
+        <a href="/">MTG Investor's Grail</a>
       </div>
-    </Link>
+    </div>
   );
 }
 

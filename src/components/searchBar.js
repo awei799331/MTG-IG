@@ -1,16 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
-import { useSelector } from 'react-redux';
 import '../css/App.css';
 import '../css/home.css';
 import SearchIcon from '../img/search.svg';
-import { updateQuery, selectUnique } from '../actions/index';
-import { useDispatch } from 'react-redux';
 
 function HomeSearch() {
-  const searchQuery = useSelector(state => state.search.query);
-  const searchUnique = useSelector(state => state.search.unique);
-  const dispatch = useDispatch();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchUnique, setSearchUnique] = useState('');
 
   return(
     <Form
@@ -20,12 +16,12 @@ function HomeSearch() {
       value={ searchQuery }
       type="text"
       name="q"
-      onChange={ e => dispatch(updateQuery(e.target.value)) }
+      onChange={ e => setSearchQuery(e.target.value) }
       />
       <HomeSelect
       name='unique'
       value={ searchUnique }
-      onChange={ e => dispatch(selectUnique(e.target.value)) }
+      onChange={ e => setSearchUnique(e.target.value) }
       >
         <option value='cards'>Cards</option>
         <option value='art'>Artworks</option>
@@ -85,14 +81,13 @@ const HomeSelect = styled.select`
   transition: all 500ms linear 0s;
 
   & > option {
-    background-color: #666;
+    background-color: rgba(102, 102, 102, 1);
   }
 `;
 
-function SearchBar() {
-  const searchQuery = useSelector(state => state.query);
-  const searchUnique = useSelector(state => state.unique);
-  const dispatch = useDispatch();
+function SearchBar(props) {
+  const [searchQuery, setSearchQuery] = useState(props.query ? (props.query.q ? props.query.q : '') : '');
+  const [searchUnique, setSearchUnique] = useState(props.query ? (props.query.unique ? props.query.unique : '') : '');
 
   return(
     <Form2
@@ -103,12 +98,12 @@ function SearchBar() {
       type="text"
       name="q"
       placeholder="Search for a card"
-      onChange={ e => dispatch(updateQuery(e.target.value)) }
+      onChange={ e => setSearchQuery(e.target.value) }
       />
       <SearchSelect
       name='unique'
       value={ searchUnique }
-      onChange={ e => dispatch(selectUnique(e.target.value)) }
+      onChange={ e => setSearchUnique(e.target.value) }
       >
         <option value='cards'>Cards</option>
         <option value='art'>Artworks</option>

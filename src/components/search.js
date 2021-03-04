@@ -13,7 +13,7 @@ import BG from './background';
 import { fixedEncodeURIComponent, decodeQueryParam } from '../utils/utils';
 import { SearchBar } from './searchBar';
 import { useSelector, useDispatch } from 'react-redux';
-import { requestScryfall, selectUnique } from '../actions/index';
+import { requestScryfall } from '../actions/index';
 
 function Search(props) {
   const status = useSelector(state => state.responses.status);
@@ -29,13 +29,13 @@ function Search(props) {
     return {
       q: queryTemp.q,
       page: queryTemp.page ? parseInt(queryTemp.page) : 1,
-      unique: queryTemp.unique ? queryTemp.unique: 'card'
+      unique: queryTemp.unique ? queryTemp.unique: 'card',
+      redirected: queryTemp.redirected ? queryTemp.redirected : null
     };
   }, [props.location.search]);
 
   useEffect(() => {
     dispatch(requestScryfall(query.q, query.unique, query.page));
-    dispatch(selectUnique(query.unique));
   }, [query]);
 
   return(
@@ -55,10 +55,10 @@ function Search(props) {
               </div>
             </div> :
 
-            status === 'multi' ?
+            status === 'multi' || query.redirected ?
             <MultiSearch cards={ response } query={ query } /> :
 
-            status === 'single' ?
+            status === 'single' &&  query.redirected === null ?
             <Redirect to={`/card/${ fixedEncodeURIComponent(response.data[0].id) }`} /> :
             
             status === 'error' ?
@@ -141,7 +141,7 @@ function MultiSearch(props) {
   return(
     <Wrapper>
       <Info>
-          <SearchBar query/>
+          <SearchBar query={ query[0] } />
           <InfoFlex>
             <p>
               Showing results for: <b>{ query[0].q }</b>
