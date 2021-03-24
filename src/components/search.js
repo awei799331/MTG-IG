@@ -57,7 +57,7 @@ function Search(props) {
               </div>
             </div> :
 
-            status === 'multi' || query.redirected ?
+            status === 'multi' && query.redirected ?
             <MultiSearch cards={ response } query={ query } /> :
 
             status === 'single' &&  query.redirected === null ?

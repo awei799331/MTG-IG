@@ -38,7 +38,7 @@ const responsesReducer = (state = responsesInitialState, action) => {
     case 'SETSTATUSLOADING':
       return {
         ...state,
-        status: action.payload
+        status: 'loading'
       }
     case 'SETRESPONSE':
       return {
