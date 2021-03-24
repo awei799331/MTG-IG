@@ -7,6 +7,8 @@ import SearchIcon from '../img/search.svg';
 function HomeSearch() {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchUnique, setSearchUnique] = useState('');
+  const [searchOrder, setSearchOrder] = useState('');
+  const [searchDir, setSearchDir] = useState('');
 
   return(
     <Form
@@ -18,15 +20,38 @@ function HomeSearch() {
       name="q"
       onChange={ e => setSearchQuery(e.target.value) }
       />
-      <HomeSelect
-      name='unique'
-      value={ searchUnique }
-      onChange={ e => setSearchUnique(e.target.value) }
-      >
-        <option value='cards'>Cards</option>
-        <option value='art'>Artworks</option>
-        <option value='prints'>All Printings</option>
-      </HomeSelect>
+      <RowFlex>
+        <HomeSelect
+        name='unique'
+        value={ searchUnique }
+        onChange={ e => setSearchUnique(e.target.value) }
+        >
+          <option value='cards'>Cards</option>
+          <option value='art'>Artworks</option>
+          <option value='prints'>All Printings</option>
+        </HomeSelect>
+        <HomeSelect
+        name='order'
+        value={ searchOrder }
+        onChange={ e => setSearchOrder(e.target.value) }
+        >
+          <option value='name'>Name</option>
+          <option value='usd'>USD</option>
+          <option value='set'>Set</option>
+          <option value='released'>Release Date</option>
+          <option value='rarity'>Rarity</option>
+          <option value='color'>Color</option>
+        </HomeSelect>
+        <HomeSelect
+        name='dir'
+        value={ searchDir }
+        onChange={ e => setSearchDir(e.target.value) }
+        >
+          <option value='auto'>Auto</option>
+          <option value='asc'>Ascending</option>
+          <option value='desc'>Descending</option>
+        </HomeSelect>
+      </RowFlex>
     </Form>
   );
 }
@@ -76,7 +101,8 @@ const HomeSelect = styled.select`
   border-color: rgba(255,255,255,0.3);
   border-width: 2px;
   border-style: solid;
-  margin: 2px auto;
+  padding: 2px;
+  margin: 2px;
   outline: none;
   transition: all 500ms linear 0s;
 
@@ -85,9 +111,17 @@ const HomeSelect = styled.select`
   }
 `;
 
+const RowFlex = styled.div`
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+`;
+
 function SearchBar(props) {
   const [searchQuery, setSearchQuery] = useState(props.query ? (props.query.q ? props.query.q : '') : '');
   const [searchUnique, setSearchUnique] = useState(props.query ? (props.query.unique ? props.query.unique : '') : '');
+  const [searchOrder, setSearchOrder] = useState(props.query ? (props.query.order ? props.query.order : '') : '');
+  const [searchDir, setSearchDir] = useState(props.query ? (props.query.dir ? props.query.dir : '') : '');
 
   return(
     <Form2
@@ -108,6 +142,27 @@ function SearchBar(props) {
         <option value='cards'>Cards</option>
         <option value='art'>Artworks</option>
         <option value='prints'>All Printings</option>
+      </SearchSelect>
+      <SearchSelect
+        name='order'
+        value={ searchOrder }
+        onChange={ e => setSearchOrder(e.target.value) }
+      >
+        <option value='name'>Name</option>
+        <option value='usd'>USD</option>
+        <option value='set'>Set</option>
+        <option value='released'>Release Date</option>
+        <option value='rarity'>Rarity</option>
+        <option value='color'>Color</option>
+      </SearchSelect>
+      <SearchSelect
+      name='dir'
+      value={ searchDir }
+      onChange={ e => setSearchDir(e.target.value) }
+      >
+        <option value='auto'>Auto</option>
+        <option value='asc'>Ascending</option>
+        <option value='desc'>Descending</option>
       </SearchSelect>
     </Form2>
   );
@@ -144,6 +199,7 @@ const InputText2 = styled.input`
 const SearchSelect = styled.select`
   background-color: #f2f2fd;
   border: 1px solid #b3b3b3;
+  margin: 2px;
 `;
 
 export { HomeSearch, SearchBar };

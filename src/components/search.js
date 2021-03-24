@@ -30,12 +30,14 @@ function Search(props) {
       q: queryTemp.q,
       page: queryTemp.page ? parseInt(queryTemp.page) : 1,
       unique: queryTemp.unique ? queryTemp.unique: 'card',
+      order: queryTemp.order ? queryTemp.order: 'name',
+      dir: queryTemp.dir ? queryTemp.dir: 'auto',
       redirected: queryTemp.redirected ? queryTemp.redirected : null
     };
   }, [props.location.search]);
 
   useEffect(() => {
-    dispatch(requestScryfall(query.q, query.unique, query.page));
+    dispatch(requestScryfall(query.q, query.unique, query.order, query.dir, query.page));
   }, [query]);
 
   return(

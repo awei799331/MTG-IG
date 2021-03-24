@@ -42,14 +42,15 @@ export const setResponse = (res) => {
   }
 }
 
-export const requestScryfall = (q, unique, page) => {
+export const requestScryfall = (q, unique, order, dir, page) => {
   return function(dispatch) {
     dispatch(setStatusLoading());
     axios.get('https://api.scryfall.com/cards/search', {
       params: {
-        order: 'name',
         q,
         unique,
+        order,
+        dir,
         page
       }
       })

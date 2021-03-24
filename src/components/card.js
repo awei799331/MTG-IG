@@ -200,6 +200,9 @@ function Card() {
                     </Utility>
                   </UtilityWrapper>
                   <div className="graph">
+                    <GraphTitle>
+                      Recent Price History & Predictions (data below is dummy data)
+                    </GraphTitle>
                     <LineChart width={600} height={300} data={ sampleFakeCardData } margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
                       <Line type="monotone" dataKey="price" stroke="#8884d8" />
                       <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
@@ -482,6 +485,11 @@ const UtilityText = styled(Link)`
   &:hover {
     background-color: #c4c4c4;
   }
+`;
+
+const GraphTitle = styled.p`
+  font-size: 32px;
+  font-weight: 400;
 `;
 
 export { Card as default };
