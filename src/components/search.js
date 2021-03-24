@@ -31,8 +31,7 @@ function Search(props) {
       page: queryTemp.page ? parseInt(queryTemp.page) : 1,
       unique: queryTemp.unique ? queryTemp.unique: 'card',
       order: queryTemp.order ? queryTemp.order: 'name',
-      dir: queryTemp.dir ? queryTemp.dir: 'auto',
-      redirected: queryTemp.redirected ? queryTemp.redirected : null
+      dir: queryTemp.dir ? queryTemp.dir: 'auto'
     };
   }, [props.location.search]);
 
@@ -57,11 +56,11 @@ function Search(props) {
               </div>
             </div> :
 
-            status === 'multi' && query.redirected ?
-            <MultiSearch cards={ response } query={ query } /> :
-
-            status === 'single' &&  query.redirected === null ?
+            status === 'single' ?
             <Redirect to={`/card/${ fixedEncodeURIComponent(response.data[0].id) }`} /> :
+
+            status === 'multi' ?
+            <MultiSearch cards={ response } query={ query } /> :
             
             status === 'error' ?
             <div className="load">

@@ -185,16 +185,16 @@ function Card() {
                       <PricesHeader>
                         Helpful Links
                       </PricesHeader>
-                      <UtilityText to={`/search?q=oracle_id%3A${ fixedEncodeURIComponent(response.oracle_id) }&unique=prints&redirected=true`}>
+                      <UtilityText to={`/search?q=oracle_id%3A${ fixedEncodeURIComponent(response.oracle_id) }&unique=prints`}>
                         View all printings of this card
                       </UtilityText>
-                      <UtilityText to={`/search?q=set%3A${ fixedEncodeURIComponent(response.set) }&unique=prints&redirected=true`}>
+                      <UtilityText to={`/search?q=set%3A${ fixedEncodeURIComponent(response.set) }&unique=prints`}>
                         View all cards in set
                       </UtilityText>
-                      <UtilityText to={`/search?q=oracle_id%3A${ fixedEncodeURIComponent(response.oracle_id) }+lang%3Aany&unique=prints&redirected=true`}>
+                      <UtilityText to={`/search?q=oracle_id%3A${ fixedEncodeURIComponent(response.oracle_id) }+lang%3Aany&unique=prints`}>
                         View all languages
                       </UtilityText>
-                      <UtilityText to={`/search?q=oracle_id%3A${ fixedEncodeURIComponent(response.oracle_id) }+lang%3Aany&unique=prints&redirected=true`}>
+                      <UtilityText to={`/search?q=oracle_id%3A${ fixedEncodeURIComponent(response.oracle_id) }+lang%3Aany&unique=prints`}>
                         Report a problem (Currently not working)
                       </UtilityText>
                     </Utility>
