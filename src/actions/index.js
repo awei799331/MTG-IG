@@ -42,6 +42,12 @@ export const setResponse = (res) => {
   }
 }
 
+export const resetSearch = () => {
+  return {
+    type: 'RESETSEARCH'
+  }
+}
+
 export const requestScryfall = (q, unique, order, dir, page) => {
   return function(dispatch) {
     dispatch(setStatusLoading());

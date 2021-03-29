@@ -61,6 +61,13 @@ const responsesReducer = (state = responsesInitialState, action) => {
         status: 'none',
         errorMessage: action.payload
       }
+    case 'RESETSEARCH':
+      return {
+        ...state,
+        status: 'loading',
+        errorMessage: '',
+        response: {}
+      }
     default:
       return state;
   }

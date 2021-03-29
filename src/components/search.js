@@ -37,6 +37,7 @@ function Search(props) {
 
   useEffect(() => {
     dispatch(requestScryfall(query.q, query.unique, query.order, query.dir, query.page));
+    // eslint-disable-next-line
   }, [query]);
 
   return(
@@ -56,11 +57,11 @@ function Search(props) {
               </div>
             </div> :
 
-            status === 'single' ?
-            <Redirect to={`/card/${ fixedEncodeURIComponent(response.data[0].id) }`} /> :
-
             status === 'multi' ?
             <MultiSearch cards={ response } query={ query } /> :
+
+            status === 'single' ?
+            <Redirect to={`/card/${ fixedEncodeURIComponent(response.data[0].id) }`} /> :
             
             status === 'error' ?
             <div className="load">

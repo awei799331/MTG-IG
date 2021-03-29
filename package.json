@@ -24,7 +24,7 @@
     "typescript": "^3.9.6"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "set HTTPS=true && react-scripts start",
     "build": "react-scripts build",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",

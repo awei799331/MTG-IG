@@ -4,6 +4,7 @@ import axios from 'axios';
 import styled from 'styled-components';
 import PuffLoader from "react-spinners/PuffLoader";
 import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip } from 'recharts';
+import { useDispatch } from 'react-redux';
 
 import '../css/App.css';
 import '../css/search.css';
@@ -19,12 +20,14 @@ function Card() {
   const [cardSide, setCardSide] = useState(0);
   const [response, setResponse] = useState({});
   const [renderType, setRenderType] = useState('loading');
+  const dispatch = useDispatch();
 
   const sampleFakeCardData = [
     {date: "Feb 27, 2021", price: 5.00}, {date: "Feb 28, 2021", price: 6.00}, {date: "Mar 1, 2021", price: 10.00}, {date: "Mar 2, 2021", price: 3.00}
   ];
 
   useEffect(() => {
+    dispatch({ type: 'RESETSEARCH' });
     if (id === '') {
       setRedir(true);
     } else {
@@ -48,6 +51,7 @@ function Card() {
           setRenderType('none');
         });
     }
+    // eslint-disable-next-line
   }, [id]);
 
   function flipCard() {
