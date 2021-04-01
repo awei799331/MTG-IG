@@ -20,6 +20,10 @@ function NavBar() {
     config: config.gentle,
   });
 
+  const mobileTransform = useSpring({
+    top: navbarOpen ? '50px' : '-500px',
+  });
+
   function handleNavbar() {
     setNavbarOpen(!navbarOpen);
   }
@@ -29,13 +33,13 @@ function NavBar() {
       <Nav style={ barAnimation }>
         <Container>
           <Logo />
-          <animated.ul style={ LinkAnimation } className="navbar">
+          <NavBarWrapper style={ LinkAnimation } className="navbar">
             <li className="navtext"><NavLink to="/how-it-works">How it Works</NavLink></li>
             <li className="navtext"><NavLink to="/about">About</NavLink></li>
             <li className="navtext"><NavLink to="/contact">Contact</NavLink></li>
             <li className="navtext"><NavLink to="/profile">Profile</NavLink></li>
             <li className="navtext"><NavLink to="/login">Login</NavLink></li>
-          </animated.ul>
+          </NavBarWrapper>
           <NavBurgerWrapper>
             <Burger
               navbarState={ navbarOpen } 
@@ -44,10 +48,15 @@ function NavBar() {
           </NavBurgerWrapper>
         </Container>
       </Nav>
-      <CollapseMenu
-        navbarState={ navbarOpen }
-        handleNavbar={ handleNavbar }
-      />
+      <CollapseWrapper style={ mobileTransform }>
+        <CollapseNavLinks>
+          <li><NavLink to="/howItWorks">How it Works</NavLink></li>
+          <li><NavLink to="/about">About</NavLink></li>
+          <li><NavLink to="/contact">Contact</NavLink></li>
+          <li><NavLink to="/profile">Profile</NavLink></li>
+          <li><NavLink to="/login">Login</NavLink></li>
+        </CollapseNavLinks>
+      </CollapseWrapper>
     </>
   );
 }
@@ -64,23 +73,6 @@ function Logo() {
     </div>
   );
 }
-
-const CollapseMenu = (props) => {
-  if (props.navbarState === true) {
-    return (
-      <CollapseWrapper>
-        <CollapseNavLinks>
-          <li><NavLink to="/howItWorks">How it Works</NavLink></li>
-          <li><NavLink to="/about">About</NavLink></li>
-          <li><NavLink to="/contact">Contact</NavLink></li>
-          <li><NavLink to="/profile">Profile</NavLink></li>
-          <li><NavLink to="/login">Login</NavLink></li>
-        </CollapseNavLinks>
-      </CollapseWrapper>
-    );
-  }
-  return null;
-};
 
 function Burger(props) {
   return(
@@ -101,6 +93,7 @@ const LogoImg = styled.img`
 
 const Nav = styled(animated.div)`
   font-size: 14px;
+  z-index: 10;
 `;
 
 const Container = styled.div`
@@ -111,6 +104,12 @@ const Container = styled.div`
   margin: 0;
   height: auto;
   background-color: #222222;
+`;
+
+const NavBarWrapper = styled(animated.ul)`
+  @media (max-width: 767px) {
+    display: none;
+  }
 `;
 
 const NavBurgerWrapper = styled.div`
@@ -145,11 +144,15 @@ const BurgerWrapper = styled.div`
   }
 `;
 
-const CollapseWrapper = styled.div`
+const CollapseWrapper = styled(animated.div)`
   background: #333333;
-  position: fixed;
+  position: absolute;
   top: 50px;
   left: 0;
+  z-index: 9;
+  @media (min-width: 767px) {
+    display: none;
+  }
 `;
 
 const CollapseNavLinks = styled.ul`
